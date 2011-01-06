@@ -71,6 +71,7 @@ var FourSquare = {
             // actions: {
             //     set: ['value']
             // },
-        }
+        },
+        badges: {}
     }
 };

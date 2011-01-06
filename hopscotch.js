@@ -13,10 +13,18 @@
     // capitalize an remove last "s" for syntax fancy
     function oname(str) { return caps(sing(str)) };
     // decorate fousquare responses
-    function decorate( type, obj ) {
+    function decorate( type, obj, parent ) {
     	var typeKlass = oname(type);
-    	if( Hopscotch[ typeKlass ] ) return  Hopscotch[ typeKlass ]( obj );
-        else console.debug('no',type,typeof type,obj)
+    	if(typeof obj !== 'string' && typeof Hopscotch[ typeKlass ] !== 'undefined'){
+    	    if(obj.count && obj.count > 0 && obj.items){
+    	        var objects = [];
+    	        $.each(obj.items,function(i) {
+                    objects.push(new Hopscotch[ typeKlass ]( obj.items[i] ))
+    	        });
+    	        if(parent) parent[type+'Count'] = obj.count;
+    	        return objects;
+    	    }else return new Hopscotch[ typeKlass ]( obj );
+    	};
     	return obj
     };
     /* 
@@ -99,18 +107,24 @@
     	}
     };
 
+
 	for(var endpoint in FourSquare.endpoints){
 		var klass = oname( endpoint );
 		Hopscotch[klass] = function( data ) {
-			var k = arguments.callee;
-			if(!(this instanceof arguments.callee)) return new k( data )
-			if(k.name === 'user' && !data.id){ data.id = 'self'}
-			$.extend(this,data)
-			this.id = data.id||null;
-			for(var k in this.data){
-			    console.debug(k)
-				this.data[k] = decorate(k, this.data[k]);
-			}
+		    !(endpoint==='user')||(data.id=data.id||'self')
+		    this.data = {};
+		    for(var k in data){
+		        this.data[k]=data[k];
+		        this[k] = decorate(k, data[k], this);
+		    }
+            // if(endpoint === 'user' && !data.id) data.id ='self'
+            //             this.data = data;            
+            // if(endpoint === 'user' && !this.data.id){ this.data.id = 'self'}
+            // this.id = this.data.id||null;
+            // for(var k in this.data){
+            //     console.debug("k,this.data[k]", this,k,this.data[k])
+            //  this.data[k] = decorate(k, this.data[k]);
+            // }
 		};
 		Hopscotch[klass].name = sing( endpoint );
 		for( var method in FourSquare.endpoints[ endpoint ].methods ){
