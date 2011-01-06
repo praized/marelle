@@ -88,7 +88,7 @@
     };
 
     function decorate( type, obj ) {
-    	var typeKlass = classname(type);
+    	var typeKlass = oname(type);
     	if( hopscotch[ typeKlass ] ) return  hopscotch[ typeKlass ]( obj )
     	// else console.debug('no',type,typeof type,obj)
     	return obj
@@ -117,7 +117,7 @@
 
     (function(hopscotch) {
     	for(var endpoint in FourSquare.endpoints){
-    		var klass = classname( endpoint );
+    		var klass = oname( endpoint );
     		hopscotch[klass] = function( data ) {
     			var k = arguments.callee;
     			if(!(this instanceof arguments.callee)) return new k( data )
