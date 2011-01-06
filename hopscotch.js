@@ -15,7 +15,7 @@
     if (typeof sessionStorage !== 'object') {
         var sessionStorage = {
             setItem: function(name, value) {
-                document.cookie = name + "=" + value + expires + "; path=/";
+                document.cookie = name + "=" + value + "; path=/";
                 return value;
             },
             getItem: function(name) {
