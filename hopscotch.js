@@ -4,7 +4,6 @@
 	Author: Francois Lafortune
 */
 (function() {
-    var FSQUARE_CLIENT_ID = 'FY2YR0P3R1FYVY3ZGEYMJJQVJDHK4QMFETEWRMHBOJTE2KNH';
     function sing(str) {
     	return str.replace(/s$/,'')
     };
