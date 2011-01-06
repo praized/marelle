@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title>login example</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../foursquare.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../hopscotch.js" type="text/javascript" charset="utf-8"></script>	
+</head>
+<body>
+	<script type="text/javascript" charset="utf-8">
+		 $(function() {
+			/*
+				Custom connection interface example
+				// basically same as connectButton()/disconnectButton()
+			*/
+			$.hopscotch(FSQUARE_CLIENT_ID);
+
+			$.hopscotch.bind('ready',function(evt, hs) {
+
+				$.hopscotch.getCurrentUser(function(response) {
+					if(!response || (response && !response.user)){
+						$('<a href="#">click to connect to foursquare</a>').bind('click', $.hopscotch.startSession).appendTo(document.body)
+					}else{
+						var user = response.user;
+						console.debug(user)
+						var card = $('<p>').html('Hello <img src="'+user.photo+'" width="14" height="14"/> '+user.firstName+' '+user.lastName+', ').append(
+							$('<a href="#">click to disconnect from foursquare</a>').bind('click',$.hopscotch.endSession)						
+						).appendTo(document.body);
+
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>
