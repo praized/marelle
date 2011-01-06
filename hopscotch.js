@@ -11,12 +11,8 @@
     // function plur(str) {
     //  return sing(str)+'s'
     // };
-    function caps(str){
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    };
-    function oname(str) {
-    	return caps(sing(str))
-    };
+    function caps(str){ return str.charAt(0).toUpperCase() + str.slice(1); };
+    function oname(str) { return caps(sing(str)) };
     if (typeof sessionStorage !== 'object') {
         var sessionStorage = {
             setItem: function(name, value) {
@@ -37,6 +33,23 @@
                 sessionStorage.setItem(name, '')
             }
         }
+    };    
+    function fetch() {
+    	var fargs = fetch.swapargs(arguments);
+    	var url = 'https://api.foursquare.com/v2/'+fargs.path;
+    	$.getJSON( url , fargs.params, function( json ) {
+    		if( json.meta.code !== 200 ) throw [ json.meta.errorType, json.meta.errorDetails ].join( "\n" );
+    		for(var k in json.response) json.response[ k ] = decorate( k, json.response[ k ] );
+    		fargs.callback( json.response );
+    	});
+    };
+    fetch.swapargs = function (args) {
+    	var args = Array.prototype.slice.call(args);
+    	var swap = {callback: $.noop, params: {oauth_token:session.getToken()}};
+    	if(typeof args[args.length-1] === 'function') swap.callback = args.pop();
+    	if(typeof args[args.length-1] === 'object')   $.extend(swap.params,args.pop());
+    	swap.path = args.join('/');
+    	return swap;
     };
     var session = {
         getToken: function() {
@@ -51,29 +64,7 @@
             return sessionStorage.removeItem('hopscotch_foursquare_token');
         }
     };
-    function objectToQuerystring(obj) {
-      var str = [];
-      for(var p in obj)
-         str.push(p + "=" + encodeURIComponent(obj[p]));
-      return str.join("&");
-    };
-    function fixargs(args) {
-    	var args = Array.prototype.slice.call(args);
-    	var swap = {callback: $.noop, params: {oauth_token:session.getToken()}};
-    	if(typeof args[args.length-1] === 'function') swap.callback = args.pop();
-    	if(typeof args[args.length-1] === 'object')   $.extend(swap.params,args.pop());
-    	swap.path = args.join('/');
-    	return swap;
-    };
-    function fetch() {
-    	var fargs = fixargs(arguments);
-    	var url = 'https://api.foursquare.com/v2/'+fargs.path;
-    	$.getJSON( url , fargs.params, function( json ) {
-    		if( json.meta.code !== 200 ) throw [ json.meta.errorType, json.meta.errorDetails ].join( "\n" );
-    		for(var k in json.response) json.response[ k ] = decorate( k, json.response[ k ] );
-    		fargs.callback( json.response );
-    	});
-    };
+    
     var hopscotch = {
     	getCurrentUser: function(after) {
     		var token = session.getToken();
@@ -171,4 +162,4 @@
     token = token ? [token[1],(window.location.hash = '')][0] : session.getToken();
     session.setToken(token)
 
-})()
+})();
