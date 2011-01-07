@@ -9,6 +9,8 @@ TODO
   - Examples
   - Docu
   - Qunit
+  - Decide on browser support
+  - Remove hacks for non supported browsers.
   - ...amongst other things.
 
 *****
