@@ -11,6 +11,7 @@ TODO
   - Qunit
   - Decide on browser support
   - Remove hacks for non supported browsers.
+  - Remove and Re-Document unsupported calls
   - ...amongst other things.
 
 *****
