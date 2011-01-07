@@ -1,5 +1,5 @@
-UNDER CONSTRUCTION
-==================
+UNSTABLE, UNDER CONSTRUCTION
+============================
 
 This lib is not ready yet. 
 
