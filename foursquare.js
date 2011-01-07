@@ -1,17 +1,16 @@
-
 var FourSquare = {
     endpoints: {
-        users:    {
+        users: {
             methods: {
-               search: ['phone','email','twitter','twitterSource','fbid','name'],
-               requests: []
+                search: ['phone', 'email', 'twitter', 'twitterSource', 'fbid', 'name'],
+                requests: []
             },
             aspects: {
                 badges: [],
-                checkins: ['limit','offset','afterTimestamp','beforeTimestamp']  ,
+                checkins: ['limit', 'offset', 'afterTimestamp', 'beforeTimestamp'],
                 friends: [],
-                tips: ['sort','ll'],
-                todos: ['sort','ll'],
+                tips: ['sort', 'll'],
+                todos: ['sort', 'll'],
                 venuehistory: [],
             },
             // actions: {
@@ -19,14 +18,14 @@ var FourSquare = {
             //     unfriend: [],
             //     approve:[],
             //     deny:[],
-            //     setpings: ['value'] 
+            //     setpings: ['value']
             // },
         },
-        venues:   {
+        venues: {
             methods: {
-                add: ['name','address','crossStreet','city','state','zip','phone','ll','primaryCategoryId'],
+                add: ['name', 'address', 'crossStreet', 'city', 'state', 'zip', 'phone', 'll', 'primaryCategoryId'],
                 categories: [],
-                search: ['ll','llAcc','alt','altAcc','query','limit','intent']
+                search: ['ll', 'llAcc', 'alt', 'altAcc', 'query', 'limit', 'intent']
             },
             aspects: {
                 herenow: [],
@@ -40,18 +39,18 @@ var FourSquare = {
         },
         checkins: {
             methods: {
-                add: ['venueId','venue','shout','broadcast','ll','llAcc','alt','altAcc'],
-                recent: ['ll','limit','offset','afterTimestamp']
+                add: ['venueId', 'venue', 'shout', 'broadcast', 'll', 'llAcc', 'alt', 'altAcc'],
+                recent: ['ll', 'limit', 'offset', 'afterTimestamp']
             },
             // actions: {
             //     addcomment: ['text'],
             //     deletecomment: ['commentId']
             // },
         },
-        tips:     {
+        tips: {
             methods: {
-                add: ['venueId','text','url'],
-                search: ['ll','limit','offset','filter','query']
+                add: ['venueId', 'text', 'url'],
+                search: ['ll', 'limit', 'offset', 'filter', 'query']
             },
             // actions: {
             //     marktodo: [],
@@ -59,14 +58,14 @@ var FourSquare = {
             //     unmark:[]
             // },
         },
-        photos:   {
+        photos: {
             methods: {
-                add: ['checkingId','tipId','venueId','broadcast','ll','llAcc','alt','altAcc']
+                add: ['checkingId', 'tipId', 'venueId', 'broadcast', 'll', 'llAcc', 'alt', 'altAcc']
             }
         },
         settings: {
             methods: {
-                all:  [] 
+                all: []
             },
             // actions: {
             //     set: ['value']
