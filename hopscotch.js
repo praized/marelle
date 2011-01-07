@@ -130,6 +130,7 @@
 			return swap;
 		}
 	};
+	
 	var Hopscotch = {
 		getCurrentUser: function(after) {
 			var token = Session.getToken();
