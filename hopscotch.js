@@ -56,7 +56,9 @@
     	var fargs = fetch.swapargs(arguments);
     	var url = 'https://api.foursquare.com/v2/'+fargs.path;
     	var ctx = this;
+    	console.debug('request',url)
     	$.getJSON( url , fargs.params, function( json ) {
+    	    console.debug('response',json)
     		if( json.meta.code !== 200 ) throw [ json.meta.errorType, json.meta.errorDetails ].join( "\n" );
     		for(var k in json.response) json.response[ k ] = decorate( k, json.response[ k ] );
     		fargs.callback.call( ctx, fargs, json.response );
@@ -90,7 +92,7 @@
     		if(!token) return after(null);
     		else{
     			if(Hopscotch.currentUser) return after(Hopscotch.currentUser);
-    			fetch('users','self',function( req, json) {
+    			fetch.call(Hopscotch,'users','self',function( req, json) {
     				Hopscotch.currentUser = json; 
     				after(json);
     			});
@@ -106,58 +108,53 @@
     		window.location.reload(true)
     	}
     };
+        
+    	for(var endpoint in FourSquare.endpoints){
+        		var klass = oname( endpoint );
+        		Hopscotch[ klass ] =function( data ) {
+        		    this.data = {};
+        		    for(var k in data){
+        		        this.data[k]=data[k];
+        		        this[k] = decorate(k, data[k], this);
+        		    }
+        		};
+        		for( var method in FourSquare.endpoints[ endpoint ].methods ){
+        			// var paramNames = FourSquare.endpoints[ endpoint ].methods[ meth ];
+                    var getterName = method;        			
+        			Hopscotch[ klass ][ method ] = (function(getterName) {        			    
+            			return FourSquare.endpoints[ endpoint ].methods[method].length === 0  ? 
+            				function( callback ) {           				    
+            					fetch.call( this, endpoint, method, params, callback );
+            				} : 
+            				function( params, callback ) {
+            					fetch.call( this, endpoint, method, params, callback );
+            				} ;					
+        			})(getterName)
+        		};
+        		for(var aspect in FourSquare.endpoints[ endpoint ].aspects ){
+        		    var getterName = 'get'+caps(aspect);
+        			Hopscotch[ klass ].prototype[ getterName ] = (function(getterName) {
+            			return FourSquare.endpoints[ endpoint ].aspects[aspect].length === 0  ? 
+            				function( id, callback ) {
+            					fetch.call( this , endpoint, method, id, aspect, callback );
+            				} : 
+            				function( id, params, callback ) {
+            					fetch.call( this, endpoint, method, id, aspect, params, callback );
+            				} ;
+        			})(getterName);
+                    // Hopscotch[ klass ].prototype[ getterName ] = function( params, callback ) {
+                    //  return Hopscotch[ klass ][ getterName ]( this.id, params, callback );
+                    // };
+        		};
+    	};        
 
 
-	for(var endpoint in FourSquare.endpoints){
-		var klass = oname( endpoint );
-		Hopscotch[klass] = function( data ) {
-		    !(endpoint==='user')||(data.id=data.id||'self')
-		    this.data = {};
-		    for(var k in data){
-		        this.data[k]=data[k];
-		        this[k] = decorate(k, data[k], this);
-		    }
-            // if(endpoint === 'user' && !data.id) data.id ='self'
-            //             this.data = data;            
-            // if(endpoint === 'user' && !this.data.id){ this.data.id = 'self'}
-            // this.id = this.data.id||null;
-            // for(var k in this.data){
-            //     console.debug("k,this.data[k]", this,k,this.data[k])
-            //  this.data[k] = decorate(k, this.data[k]);
-            // }
-		};
-		Hopscotch[klass].name = sing( endpoint );
-		for( var method in FourSquare.endpoints[ endpoint ].methods ){
-			// var paramNames = FourSquare.endpoints[ endpoint ].methods[ meth ];
-			var getterName = 'get'+caps(method);
-			Hopscotch[ klass ][ getterName ] = FourSquare.endpoints[ endpoint ].methods[method].length === 0  ? 
-				function( callback ) {
-					fetch( endpoint, method, params, callback );
-				} : 
-				function( params, callback ) {
-					fetch( endpoint, method, params, callback );
-				} ;					
-		};
-		for(var aspect in FourSquare.endpoints[ endpoint ].aspects ){
-			var getterName = 'get'+caps(aspect);
-			Hopscotch[ klass ][ getterName ] =  FourSquare.endpoints[ endpoint ].aspects[aspect].length === 0  ? 
-				function( id, callback ) {
-					fetch.call( this , endpoint, method, id, aspect, callback );
-				} : 
-				function( id, params, callback ) {
-					fetch.call( this, endpoint, method, id, aspect, params, callback );
-				} ;
-			Hopscotch[ klass ].prototype[ getterName ] = function( params, callback ) {
-				return Hopscotch[ klass ][ getterName ]( this.id, params, callback );
-			};
-		};
-	};
+
 
     var tokRE = /\#?access_token\=(.+)/;
     var token = window.location.hash.match(tokRE);
     token = token ? [token[1],(window.location.hash = '')][0] : Session.getToken();
-    Session.setToken(token)
-
+    Session.setToken(token);
     $.extend({
         hopscotch: function( key, readyCallback ) {
     		if( typeof key === 'function' || typeof key ==='undefined'){
@@ -169,8 +166,8 @@
     				clientId: key
     			});
     			$.extend({
-    				hopscotch: $({}).extend(Hopscotch)
-    			});
+    			    hopscotch:$({}).extend(Hopscotch)
+    			})
     		};	
     		setTimeout(function() {
     			!($.isFunction(readyCallback))||$.hopscotch.bind('ready',readyCallback);				
