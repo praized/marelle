@@ -152,6 +152,14 @@
 			Session.clearToken();
 			window.location.hash = '';
 			window.location.reload(true)
+		},
+		signInButton: function(el) {
+		    var holder = $(el||document.body);
+            return $('<a class="hopscotch-sign-in-button" href="#">click to connect to foursquare</a>').bind('click', $.hopscotch.startSession).appendTo(holder)
+		},
+		signOutButton: function(el) {
+		    var holder = $(el||document.body);		    
+            return 	$('<a class="hopscotch-sign-out-button" href="#">click to disconnect from foursquare</a>').bind('click',$.hopscotch.endSession).appendTo(holder)
 		}
 	};
 	
@@ -159,26 +167,11 @@
 		Meta
 		====
 	*/
-	    var docs = '';
-	    function rc(i,chr) {
-            var c = 0;
-            var s = '';
-            while(i>c){
-                --i;
-                s+=chr
-            }
-            return s;
-	    }
 	$.each(FourSquare.endpoints,
 	function(endpoint) {
 		var klass = oname(endpoint);
-		docs += "\n\n"
-		var cname = 'Hopscotch.'+klass;
-		docs += cname+"\n"+rc(cname.length,'=')+"\n"
 		Hopscotch[klass] = (new Function('decorate', 'return function Hopscotch' + klass + '( data ) { for(var k in data){this[k] = decorate(k, data[k], this)}}'))(decorate)
 		for (var method in FourSquare.endpoints[endpoint].methods) {
-            docs += ("\n\n"+klass+'.'+method+'( '+(FourSquare.endpoints[endpoint].methods[method].length > 0 ? 'params, ': '')+'callback )')		    
-            docs +=("\n\nparams: { "+FourSquare.endpoints[endpoint].methods[method].join(': "", ') +': "" }')
 			var getterName = method;
 			Hopscotch[klass][method] = FourSquare.endpoints[endpoint].methods[method].length === 0 ?
 			function(callback) {
@@ -189,8 +182,6 @@
 			};
 		}
 		for (var aspect in FourSquare.endpoints[endpoint].aspects) {
-            docs +=("\n\n"+aspect+'( '+(FourSquare.endpoints[endpoint].aspects[aspect].length > 0 ? 'params, ': '')+'callback )')
-            docs+= ("\n\nparams: { "+FourSquare.endpoints[endpoint].aspects[aspect].join(': "", ') +': "" }')
 			var getterName = 'get' + caps(aspect);
 			Hopscotch[klass].prototype[getterName] = FourSquare.endpoints[endpoint].aspects[aspect].length === 0 ?
 			function(callback) {
@@ -205,7 +196,7 @@
 		}
 
 	});
-console.debug(docs)
+
 	/*
 		Initialize
 		==========

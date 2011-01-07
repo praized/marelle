@@ -21,13 +21,13 @@
 
 				$.hopscotch.getCurrentUser(function(response) {
 					if(!response || (response && !response.user)){
+						$.hopscotch.signInButton()
 						$('<a href="#">click to connect to foursquare</a>').bind('click', $.hopscotch.startSession).appendTo(document.body)
 					}else{
 						var user = response.user;
-						console.debug(user)
-						var card = $('<p>').html('Hello <img src="'+user.photo+'" width="14" height="14"/> '+user.firstName+' '+user.lastName+', ').append(
-							$('<a href="#">click to disconnect from foursquare</a>').bind('click',$.hopscotch.endSession)						
-						).appendTo(document.body);
+						var card = $('<p>').html('Hello <img src="'+user.photo+'" width="14" height="14"/> '+user.firstName+' '+user.lastName+', ');
+						card.appendTo(document.body);
+						$.hopscotch.signOutButton(card)						
 
 					}
 				});
