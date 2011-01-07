@@ -3,8 +3,83 @@
 	  License: Pending Review...
 	  Author: Francois Lafortune
 */
-
  (function() {
+     var FourSquare = {
+         endpoints: {
+             users: {
+                 methods: {
+                     search: ['phone', 'email', 'twitter', 'twitterSource', 'fbid', 'name'],
+                     requests: []
+                 },
+                 aspects: {
+                     badges: [],
+                     checkins: ['limit', 'offset', 'afterTimestamp', 'beforeTimestamp'],
+                     friends: [],
+                     tips: ['sort', 'll'],
+                     todos: ['sort', 'll'],
+                     venuehistory: [],
+                 },
+                 // actions: {
+                 //     request: [],
+                 //     unfriend: [],
+                 //     approve:[],
+                 //     deny:[],
+                 //     setpings: ['value']
+                 // },
+             },
+             venues: {
+                 methods: {
+                     add: ['name', 'address', 'crossStreet', 'city', 'state', 'zip', 'phone', 'll', 'primaryCategoryId'],
+                     categories: [],
+                     search: ['ll', 'llAcc', 'alt', 'altAcc', 'query', 'limit', 'intent']
+                 },
+                 aspects: {
+                     herenow: [],
+                     tips: ['sort']
+                 },
+                 // actions: {
+                 //     marktodo: ['text'],
+                 //     flag: ['problem:mislocated|closed|duplicate'],
+                 //     proposeedit: ['name','address','crossStreet','city','state','zip','phone','ll','primaryCategoryId'],
+                 // },
+             },
+             checkins: {
+                 methods: {
+                     add: ['venueId', 'venue', 'shout', 'broadcast', 'll', 'llAcc', 'alt', 'altAcc'],
+                     recent: ['ll', 'limit', 'offset', 'afterTimestamp']
+                 },
+                 // actions: {
+                 //     addcomment: ['text'],
+                 //     deletecomment: ['commentId']
+                 // },
+             },
+             tips: {
+                 methods: {
+                     add: ['venueId', 'text', 'url'],
+                     search: ['ll', 'limit', 'offset', 'filter', 'query']
+                 },
+                 // actions: {
+                 //     marktodo: [],
+                 //     markdone:[],
+                 //     unmark:[]
+                 // },
+             },
+             photos: {
+                 methods: {
+                     add: ['checkingId', 'tipId', 'venueId', 'broadcast', 'll', 'llAcc', 'alt', 'altAcc']
+                 }
+             },
+             settings: {
+                 methods: {
+                     all: []
+                 },
+                 // actions: {
+                 //     set: ['value']
+                 // },
+             },
+             badges: {}
+         }
+     };
 	/* 
 		Fake sessionStorage() by storing token in cookie if no sessionStorage
 		(used by session obj)
@@ -170,6 +245,7 @@
 	$.each(FourSquare.endpoints,
 	function(endpoint) {
 		var klass = oname(endpoint);
+		// this dark-magic fancyness helps me debug in console. Not the best approach but works.
 		Hopscotch[klass] = (new Function('decorate', 'return function Hopscotch' + klass + '( data ) { for(var k in data){this[k] = decorate(k, data[k], this)}}'))(decorate)
 		for (var method in FourSquare.endpoints[endpoint].methods) {
 			var getterName = method;
@@ -208,10 +284,7 @@
 		hopscotch: function(key, readyCallback) {
 			if (typeof key !== 'string') throw "Must provide client Id";
 			if (!Hopscotch.clientId) {
-				$.extend(Hopscotch, {
-					isReady: true,
-					clientId: key
-				});
+			    Hopscotch.clientId = key;
 				$.extend({
 					hopscotch: $({}).extend(Hopscotch)
 				});
