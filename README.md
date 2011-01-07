@@ -11,6 +11,7 @@ TODO
   - Qunit
   - ...amongst other things.
 
+*****
 
 Hopscotch API
 =============
