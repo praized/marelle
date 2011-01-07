@@ -6,7 +6,6 @@ This lib is not ready yet.
 TODO 
 
 
-  - implement metaClass() idea for simplicity and dark magic
   - split development to multiple files 
   - write Qunit tests...
   - ...amongst other things.

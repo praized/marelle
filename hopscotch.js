@@ -16,13 +16,18 @@
     function decorate( type, obj, parent ) {
     	var typeKlass = oname(type);
     	if(typeof obj !== 'string' && typeof Hopscotch[ typeKlass ] !== 'undefined'){
-    	    if(obj.count && obj.count > 0 && obj.items){
-    	        var objects = [];
-    	        $.each(obj.items,function(i) {
-                    objects.push(new Hopscotch[ typeKlass ]( obj.items[i] ))
-    	        });
+    	    if(obj.count && obj.count > 0){
+    	        if(obj.items){
+        	        var objects = [];
+        	        $.each(obj.items,function(i) {
+                        objects.push(new Hopscotch[ typeKlass ]( obj.items[i] ))
+        	        });
+    	        }else{
+    	            objects = new Array(obj.count)
+    	        };
     	        if(parent) parent[type+'Count'] = obj.count;
-    	        return objects;
+    	        return objects;    	            
+    	        
     	    }else return new Hopscotch[ typeKlass ]( obj );
     	};
     	return obj
@@ -57,10 +62,14 @@
     	var url = 'https://api.foursquare.com/v2/'+fargs.path;
     	var ctx = this;
     	console.debug('request',url)
-    	$.getJSON( url , fargs.params, function( json ) {
+    	if(fetch.cache[url]) return fargs.callback.call( ctx, fargs, fetch.cache[url] );
+    	$.getJSON( url+'?callback=?' , fargs.params, function( json ) {
     	    console.debug('response',json)
-    		if( json.meta.code !== 200 ) throw [ json.meta.errorType, json.meta.errorDetails ].join( "\n" );
-    		for(var k in json.response) json.response[ k ] = decorate( k, json.response[ k ] );
+    		if( json.meta.code !== 200 ) throw  json.meta.code+' '+json.meta.errorDetail;
+    		$.each(json.response,function(k,obj) {
+                json.response[k] = decorate( k, obj )
+    		});
+    		fetch.cache[url] = json.response;
     		fargs.callback.call( ctx, fargs, json.response );
     	});
     };
@@ -72,6 +81,7 @@
     	swap.path = args.join('/');
     	return swap;
     };
+    fetch.cache = {};
     var Session = {
         getToken: function() {
             var token = sessionStorage.getItem('hopscotch_foursquare_token');
@@ -83,9 +93,15 @@
         },
         clearToken: function() {
             return sessionStorage.removeItem('hopscotch_foursquare_token');
+        },
+        initialize: function() {
+            var tokRE = /\#?access_token\=(.+)/;
+            var token = window.location.hash.match(tokRE);
+            token = token ? [token[1],(window.location.hash = '')][0] : Session.getToken();
+            Session.setToken(token);
         }
     };
-    
+
     var Hopscotch = {
     	getCurrentUser: function(after) {
     		var token = Session.getToken();
@@ -109,52 +125,37 @@
     	}
     };
         
-    	for(var endpoint in FourSquare.endpoints){
-        		var klass = oname( endpoint );
-        		Hopscotch[ klass ] =function( data ) {
-        		    this.data = {};
-        		    for(var k in data){
-        		        this.data[k]=data[k];
-        		        this[k] = decorate(k, data[k], this);
-        		    }
-        		};
-        		for( var method in FourSquare.endpoints[ endpoint ].methods ){
-        			// var paramNames = FourSquare.endpoints[ endpoint ].methods[ meth ];
-                    var getterName = method;        			
-        			Hopscotch[ klass ][ method ] = (function(getterName) {        			    
-            			return FourSquare.endpoints[ endpoint ].methods[method].length === 0  ? 
+    $.each(FourSquare.endpoints,function(endpoint) {
+        	var klass = oname( endpoint );
+    		Hopscotch[ klass ] = (new Function('decorate','return function '+klass+'( data ) { for(var k in data){this[k] = decorate(k, data[k], this)}}'))(decorate)
+    		for(var method in FourSquare.endpoints[ endpoint ].methods){
+                    var getterName = method;       			
+        			Hopscotch[ klass ][ method ] = FourSquare.endpoints[ endpoint ].methods[method].length === 0  ? 
             				function( callback ) {           				    
             					fetch.call( this, endpoint, method, params, callback );
-            				} : 
+            				} :
             				function( params, callback ) {
             					fetch.call( this, endpoint, method, params, callback );
-            				} ;					
-        			})(getterName)
-        		};
-        		for(var aspect in FourSquare.endpoints[ endpoint ].aspects ){
-        		    var getterName = 'get'+caps(aspect);
-        			Hopscotch[ klass ].prototype[ getterName ] = (function(getterName) {
-            			return FourSquare.endpoints[ endpoint ].aspects[aspect].length === 0  ? 
-            				function( id, callback ) {
-            					fetch.call( this , endpoint, method, id, aspect, callback );
-            				} : 
-            				function( id, params, callback ) {
-            					fetch.call( this, endpoint, method, id, aspect, params, callback );
-            				} ;
-        			})(getterName);
-                    // Hopscotch[ klass ].prototype[ getterName ] = function( params, callback ) {
-                    //  return Hopscotch[ klass ][ getterName ]( this.id, params, callback );
-                    // };
-        		};
-    	};        
+            				};
+    		}
+    		for(var aspect in FourSquare.endpoints[ endpoint ].aspects){
+    		    var getterName = 'get'+caps(aspect);
+    			Hopscotch[ klass ].prototype[ getterName ] = FourSquare.endpoints[ endpoint ].aspects[aspect].length === 0  ? 
+        				function( callback ) {
+        					fetch.call( this , endpoint, this.id, aspect, callback );
+        				} : 
+        				function( params, callback ) {
+        					fetch.call( this, endpoint, this.id, aspect, params, callback );
+        				} ;
+    		}
+    			Hopscotch[ klass ].prototype[ 'get' ] = function( callback ) {
+                    fetch.call( this , endpoint, this.id, callback );
+    			}
+    });
 
+    Session.initialize();
 
-
-
-    var tokRE = /\#?access_token\=(.+)/;
-    var token = window.location.hash.match(tokRE);
-    token = token ? [token[1],(window.location.hash = '')][0] : Session.getToken();
-    Session.setToken(token);
+    // Expose 
     $.extend({
         hopscotch: function( key, readyCallback ) {
     		if( typeof key === 'function' || typeof key ==='undefined'){
