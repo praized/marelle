@@ -5,6 +5,7 @@ This lib is not ready yet.
 
 TODO 
 
+  - Try prototypal inheritance approach before committing to this first draft.
   - Templates
   - Examples
   - Docu

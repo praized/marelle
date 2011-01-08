@@ -77,9 +77,11 @@
                  //     set: ['value']
                  // },
              },
-             badges: {}
+             badges: {},
+             mayorships: {}
          }
      };
+     
 	/* 
 		Fake sessionStorage() by storing token in cookie if no sessionStorage
 		(used by session obj)
@@ -125,9 +127,9 @@
 	function decorate(type, obj, parent) {
 		var typeKlass = oname(type);
 		if (typeof obj !== 'string' && typeof Hopscotch[typeKlass] !== 'undefined') {
-			if (obj.count && obj.count > 0) {
-				if (obj.items) {
-					var objects = [];
+			if (typeof obj.count !== 'undefined') {
+                var objects = [];			    
+				if (obj.count > 0 && obj.items) {
 					$.each(obj.items,
 					function(i) {
 						objects.push(new Hopscotch[typeKlass](obj.items[i]))
@@ -256,7 +258,7 @@
 			function(params, callback) {
 				Fetcher.fetch.call(this, endpoint, method, params, callback);
 			};
-		}
+		};
 		for (var aspect in FourSquare.endpoints[endpoint].aspects) {
 			var getterName = 'get' + caps(aspect);
 			Hopscotch[klass].prototype[getterName] = FourSquare.endpoints[endpoint].aspects[aspect].length === 0 ?
@@ -266,10 +268,25 @@
 			function(params, callback) {
 				Fetcher.fetch.call(this, endpoint, this.id, aspect, params, callback);
 			};
-		}
+		};
 		Hopscotch[klass].prototype['get'] = function(callback) {
 			Fetcher.fetch.call(this, endpoint, this.id, callback);
-		}
+		};
+		if(typeof $.template === 'function'){
+            Hopscotch[klass].prototype['render'] = function( receive ) {
+                var instance = this;
+                var render = function() {
+                    if(instance.rendered) $(receive).append(instance.rendered);
+                    else{
+                        var tsel = '#'+klass.toLowerCase()+'-template';
+                        console.debug(instance)
+                        $(tsel ).tmpl(instance).appendTo( receive )
+                    }
+                };
+                if(!$('#hopscotch-templates').is('div')) return $('<div id="hopscotch-templates">').hide().load('templates.html', render ).appendTo(document.body);
+                else render();
+        	};	    
+		};
 
 	});
 
@@ -278,7 +295,7 @@
 		==========
 	*/
 	Session.initialize();
-
+    
 	// Expose
 	$.extend({
 		hopscotch: function(key, readyCallback) {
@@ -295,4 +312,5 @@
 			});
 		}
 	});
+
 })();
