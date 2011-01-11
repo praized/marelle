@@ -1,7 +1,7 @@
 $.marelle() v0.1 unstable, untested
 ===================================
 
-This lib is not ready yet. 
+Use at your own risks and perils, but you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.
 
 TODO 
 
@@ -55,7 +55,7 @@ $.marelle.User()
 
 - User.search( params, callback )
 
-    params: { phone: "", email: "", twitter: "", twitterSource: "", fbid: "", name: "" }
+    params: { phone: , email: , twitter: , twitterSource: , fbid: , name:  }
 
 - User.requests( callback )
 
@@ -67,17 +67,17 @@ $.marelle.User()
 
 - getCheckins( params, callback )
 
-    params: { limit: "", offset: "", afterTimestamp: "", beforeTimestamp: "" }
+    params: { limit: , offset: , afterTimestamp: , beforeTimestamp:  }
 
 - getFriends( callback )
 
 - getTips( params, callback )
 
-    params: { sort: "", ll: "" }
+    params: { sort: , ll:  }
 
 - getTodos( params, callback )
 
-    params: { sort: "", ll: "" }
+    params: { sort: , ll:  }
 
 - getVenuehistories( callback )
 
@@ -89,13 +89,13 @@ $.marelle.Venue()
 
 - Venue.add( params, callback )
 
-    params: { name: "", address: "", crossStreet: "", city: "", state: "", zip: "", phone: "", ll: "", primaryCategoryId: "" }
+    params: { name: , address: , crossStreet: , city: , state: , zip: , phone: , ll: , primaryCategoryId:  }
 
 - Venue.categories( callback )
 
 - Venue.search( params, callback )
 
-    params: { ll: "", llAcc: "", alt: "", altAcc: "", query: "", limit: "", intent: "" }
+    params: { ll: , llAcc: , alt: , altAcc: , query: , limit: , intent:  }
 
 ### instance methods
 
@@ -103,7 +103,7 @@ $.marelle.Venue()
 
 - getTips( params, callback )
 
-    params: { sort: "" }
+    params: { sort:  }
 
 $.marelle.Checkin()
 ---------------------
@@ -113,11 +113,11 @@ $.marelle.Checkin()
 
 - Checkin.add( params, callback )
 
-    params: { venueId: "", venue: "", shout: "", broadcast: "", ll: "", llAcc: "", alt: "", altAcc: "" }
+    params: { venueId: , venue: , shout: , broadcast: , ll: , llAcc: , alt: , altAcc:  }
 
 - Checkin.recent( params, callback )
 
-    params: { ll: "", limit: "", offset: "", afterTimestamp: "" }
+    params: { ll: , limit: , offset: , afterTimestamp:  }
 
 $.marelle.Tip()
 -----------------
@@ -127,11 +127,11 @@ $.marelle.Tip()
 
 - Tip.add( params, callback )
 
-    params: { venueId: "", text: "", url: "" }
+    params: { venueId: , text: , url:  }
 
 - Tip.search( params, callback )
 
-    params: { ll: "", limit: "", offset: "", filter: "", query: "" }
+    params: { ll: , limit: , offset: , filter: , query:  }
 
 $.marelle.Photo()
 -------------------
@@ -141,7 +141,7 @@ $.marelle.Photo()
 
 - Photo.add( params, callback )
 
-    params: { checkingId: "", tipId: "", venueId: "", broadcast: "", ll: "", llAcc: "", alt: "", altAcc: "" }
+    params: { checkingId: , tipId: , venueId: , broadcast: , ll: , llAcc: , alt: , altAcc:  }
 
 $.marelle.Setting()
 ---------------------
