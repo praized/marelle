@@ -43,7 +43,7 @@
             },
             actions: {
                 marktodo: ['text'],
-                flag: ['problem:mislocated|closed|duplicate'],
+                flag: ['problem'], 
                 proposeedit: ['name', 'address', 'crossStreet', 'city', 'state', 'zip', 'phone', 'll', 'primaryCategoryId'],
             },
         },
