@@ -3,35 +3,23 @@
 <head>
 	<meta charset=utf-8 />
 	<title>login example</title>
+	<link rel="stylesheet" href="shared/marelle.css" type="text/css">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-	<script src="../hopscotch.js" type="text/javascript" charset="utf-8"></script>	
+	<script src="../marelle.js" type="text/javascript" charset="utf-8"></script>	
 </head>
 <body>
 	<script type="text/javascript" charset="utf-8">
+		 var FSQUARE_CLIENT_ID = '';
 		 $(function() {
-			/*
-				Custom connection interface example
-				// basically same as connectButton()/disconnectButton()
-			*/
-			var FSQUARE_CLIENT_ID = '';
-			$.hopscotch(FSQUARE_CLIENT_ID);
-
-			$.hopscotch.bind('ready',function(evt, hs) {
-
-				$.hopscotch.getCurrentUser(function(response) {
-					if(!response || (response && !response.user)){
-						$.hopscotch.signInButton()
-						$('<a href="#">click to connect to foursquare</a>').bind('click', $.hopscotch.startSession).appendTo(document.body)
-					}else{
-						var user = response.user;
-						var card = $('<p>').html('Hello <img src="'+user.photo+'" width="14" height="14"/> '+user.firstName+' '+user.lastName+', ');
-						card.appendTo(document.body);
-						$.hopscotch.signOutButton(card)						
-
-					}
-				});
-			});
-		});
+		       $.marelle( FSQUARE_CLIENT_ID, function(evt, M){
+		           M.bind( 'connected', function(evt, user ){ 
+		               M.signoutButton( document.body );
+						console.log(user) // ex
+		           } ).bind( 'disconnected', function(){ 
+		               M.signinButton( document.body );                                    
+		           } );                
+		       });
+		   });
 	</script>
 </body>
 </html>

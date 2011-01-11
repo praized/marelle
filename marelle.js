@@ -266,11 +266,11 @@
         },
         signinButton: function( el ) {
             var holder = $( el||document.body );
-            return $('<a class="hopscotch-sign-in-button" href="#">click to connect to foursquare</a>').bind('click', Marelle.startSession).appendTo(holder)     
+            return $('<a class="marelle-sign-in-button" href="#">click to connect to foursquare</a>').bind('click', Marelle.startSession).appendTo(holder)     
         },
         signoutButton: function( el ) { 
             var holder = $( el||document.body );		
-            return 	$('<a class="hopscotch-sign-out-button" href="#">click to disconnect from foursquare</a>').bind('click',Marelle.endSession).appendTo(holder)        
+            return 	$('<a class="marelle-sign-out-button" href="#">click to disconnect from foursquare</a>').bind('click',Marelle.endSession).appendTo(holder)        
         },
         bind:  function(n,fn) {
             $( Marelle ).bind( n, fn );

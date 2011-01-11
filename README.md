@@ -15,33 +15,33 @@ TODO
 
 *****
 
-Hopscotch API
+Marelle API
 =============
 
-$.hopscotch
+$.marelle
 ---------
 
 ### method
 
-- $.hopscotch.getAuthenticatedUser( callback )
+- $.marelle.getAuthenticatedUser( callback )
 
-- $.hopscotch.startSession()
+- $.marelle.startSession()
 
-- $.hopscotch.endSession()
+- $.marelle.endSession()
 
-- $.hopscotch.signinButton()
+- $.marelle.signinButton()
 
-- $.hopscotch.signoutButton()
+- $.marelle.signoutButton()
 
-- $.hopscotch.bind()
+- $.marelle.bind()
 
-- $.hopscotch.unbind()
+- $.marelle.unbind()
 
-- $.hopscotch.trigger()
+- $.marelle.trigger()
 
-- $.hopscotch.once()
+- $.marelle.once()
 
-$.hopscotch.User()
+$.marelle.User()
 ------------------
 
 ### methods
@@ -75,7 +75,7 @@ $.hopscotch.User()
 - getVenuehistories( callback )
 
 
-$.hopscotch.Venue()
+$.marelle.Venue()
 -------------------
 
 ### methods
@@ -98,7 +98,7 @@ $.hopscotch.Venue()
 
     params: { sort: "" }
 
-$.hopscotch.Checkin()
+$.marelle.Checkin()
 ---------------------
 
 ### methods
@@ -112,7 +112,7 @@ $.hopscotch.Checkin()
 
     params: { ll: "", limit: "", offset: "", afterTimestamp: "" }
 
-$.hopscotch.Tip()
+$.marelle.Tip()
 -----------------
 
 ### methods
@@ -126,7 +126,7 @@ $.hopscotch.Tip()
 
     params: { ll: "", limit: "", offset: "", filter: "", query: "" }
 
-$.hopscotch.Photo()
+$.marelle.Photo()
 -------------------
 
 ### methods
@@ -136,7 +136,7 @@ $.hopscotch.Photo()
 
     params: { checkingId: "", tipId: "", venueId: "", broadcast: "", ll: "", llAcc: "", alt: "", altAcc: "" }
 
-$.hopscotch.Setting()
+$.marelle.Setting()
 ---------------------
 
 ### methods
