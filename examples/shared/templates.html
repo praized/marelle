@@ -2,7 +2,7 @@
 <style type="text/css" media="screen">
 
 	.fsq-user{width:500px;}
-	.fsq-user,.fsq-checkin,.fsq-venue,.fsq-location,.fsq-checkins-stack,.fsq-categorie{
+	.fsq-user,.fsq-checkin,.fsq-venue,.fsq-location,.fsq-checkins-stack,.fsq-category{
 		position:relative;
 		display:block;float:left;outline:1px dotted #dedede;padding:5px;font-family:sans-serif;
 		margin:0;line-height:1.75em;
@@ -24,7 +24,7 @@
 	.fsq-checkins-stack{
 		background:#f0f0f0;
 	}
-	.fsq-categorie{display:inline-block;height:32px;line-height:32px;vertical-align:top;padding:0 10px;}
+	.fsq-category{display:inline-block;height:32px;line-height:32px;vertical-align:top;padding:0 10px;}
 	.fsq-checkins-stack > *{
 		
 	}
@@ -55,8 +55,8 @@
 	<script id="venue-template" type="text/x-jquery-tmpl"> 
 		<div id="fsq-venue-${id}" class="fsq-venue">
 			<p>Name: ${name}</p>
-			{{each categories}} 
-				{{tmpl($value) "#categorie-template"}}
+			{{each categorys}} 
+				{{tmpl($value) "#category-template"}}
 			{{/each}}
 			{{tmpl(location) "#location-template"}}
 		</div>
@@ -66,14 +66,14 @@
 			<p><span class="address">${address}</span>, <span class="city">${city}</span>, <span class="state">${state}</span> <span class="lat">${lat}</span> <span class="lng">${lng}</span></p>			
 		</div>
 	</script>
-	<script id="categorie-template" type="text/x-jquery-tmpl">
+	<script id="category-template" type="text/x-jquery-tmpl">
 		{{if icon}}
-		<figure class="fsq-categorie fsq-categorie-${id}">
+		<figure class="fsq-category fsq-category-${id}">
 			<img src="${icon}" width="16" height="16" />
 			<caption>${name}</caption>
 		</figure>
 		{{else}}
-			<div class="fsq-categorie-${id}">${name}</div>
+			<div class="fsq-category-${id}">${name}</div>
 		{{/if}}
 	</script>
 </body></html>

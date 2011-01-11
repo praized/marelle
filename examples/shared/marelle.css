@@ -1,31 +1,31 @@
-	.marelle-sign-in-button,
-	.marelle-sign-out-button{
-		font-family: sans-serif;
-		position:fixed;top:5px;right:5px;
-		font-size: 15px;
-		text-decoration:none;
-		color: #fff;
-		padding: 3px 6px;
-		background: -moz-linear-gradient(
-			top,
-			#00c4ff 0%,
-			#0781ad);
-		background: -webkit-gradient( linear, left top, left bottom, from(#00c4ff), to(#0781ad));
-		border-radius: 3px;
-		-moz-border-radius: 3px;
-		-webkit-border-radius: 3px;
-		border: 1px solid #0073ff;
-		-moz-box-shadow:
-			0px 0px 3px rgba(000,000,000,0.5),
-			inset 0px 0px 0px rgba(255,255,255,0);
-		-webkit-box-shadow:
-			0px 0px 3px rgba(000,000,000,0.5),
-			inset 0px 0px 0px rgba(255,255,255,0);
-		text-shadow:
-			0px -1px 0px rgba(0,0,0,0.2),
-			0px 1px 0px rgba(2155,255,255,0.2)
-	}
-	.marelle-sign-in-button:hover,
-	.marelle-sign-out-button:hover {
-	   color: #fff;
-	   }
+.marelle-sign-in-button,
+.marelle-sign-out-button{
+	font-family: sans-serif;
+	position:fixed;top:5px;right:5px;
+	font-size: 15px;
+	text-decoration:none;
+	color: #fff;
+	padding: 3px 6px;
+	background: -moz-linear-gradient(
+		top,
+		#00c4ff 0%,
+		#0781ad);
+	background: -webkit-gradient( linear, left top, left bottom, from(#00c4ff), to(#0781ad));
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border: 1px solid #0073ff;
+	-moz-box-shadow:
+		0px 0px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 0px rgba(255,255,255,0);
+	-webkit-box-shadow:
+		0px 0px 3px rgba(000,000,000,0.5),
+		inset 0px 0px 0px rgba(255,255,255,0);
+	text-shadow:
+		0px -1px 0px rgba(0,0,0,0.2),
+		0px 1px 0px rgba(2155,255,255,0.2)
+}
+.marelle-sign-in-button:hover,
+.marelle-sign-out-button:hover {
+   color: #fff;
+}
