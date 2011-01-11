@@ -13,7 +13,14 @@ TODO
   - Remove and Re-Document unsupported calls
   - ...amongst other things.
 
+Dependencies:
+
+  - [jQuery 1.4.4](http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js)
+  - [inflection.js](http://code.google.com/p/inflection-js/)
+
 *****
+
+
 
 Marelle API
 =============
