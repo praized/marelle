@@ -5,8 +5,8 @@ This lib is not ready yet.
 
 TODO 
 
-  - Examples
-  - Docu
+  - Update Examples
+  - Update Docs after example updates
   - Qunit
   - Decide on browser support
   - Remove hacks for non supported browsers.
