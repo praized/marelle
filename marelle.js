@@ -4,7 +4,7 @@
     Description: Foursquare API client library.
     Author: Francois Lafortune, @quickredfox
     
-    Copyright 2011-Present PraizedMedia Inc. 
+    Copyright 2011 PraizedMedia Inc. 
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
