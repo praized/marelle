@@ -1,0 +1,79 @@
+<!DOCTYPE html><html><head><meta charset=utf-8 /></head><body>
+<style type="text/css" media="screen">
+
+	.fsq-user{width:500px;}
+	.fsq-user,.fsq-checkin,.fsq-venue,.fsq-location,.fsq-checkins-stack,.fsq-categorie{
+		position:relative;
+		display:block;float:left;outline:1px dotted #dedede;padding:5px;font-family:sans-serif;
+		margin:0;line-height:1.75em;
+	}
+	.fsq-user *{margin:0;}
+	.fsq-user{
+		background:#f9f9f9;
+	}
+	.fsq-user > img{position:absolute;top:5px;right:5px;}
+	.fsq-checkin{
+		background:#fcfcfc;
+	}
+	.fsq-venue{
+		background:#f6f6f6;
+	}
+	.fsq-location{
+		background:#fff;
+	}
+	.fsq-checkins-stack{
+		background:#f0f0f0;
+	}
+	.fsq-categorie{display:inline-block;height:32px;line-height:32px;vertical-align:top;padding:0 10px;}
+	.fsq-checkins-stack > *{
+		
+	}
+</style>
+	<script id="user-template" type="text/x-jquery-tmpl"> 
+		<div id="fsq-user-${id}" class="fsq-user">
+			<img src="${photo}" width="50" height="50">
+			<h2>${firstName} ${lastName}</h2>
+			<summary>Badges: ${ badgesCount } Checkins: ${ checkinsCount } Mayorships: ${ mayorshipsCount } Tips: ${ tipsCount }</summary>
+			<details>
+				<section class="fsq-checkins-stack">
+					<header><h3>Checkins</h3></header>
+					{{if checkinsCount}}
+						{{each( index, checkin ) checkins}} 
+							{{tmpl(checkin) "#checkin-template"}}
+						{{/each}}
+					{{/if}}
+				</section>
+			</details>
+		</div>
+	</script>
+	<script id="checkin-template" type="text/x-jquery-tmpl"> 
+		<div id="fsq-checkin-${id}" class="fsq-checkin">
+			<time class="when">${createdAt}</time>
+			{{tmpl(venue) "#venue-template"}}
+		</div>
+	</script>
+	<script id="venue-template" type="text/x-jquery-tmpl"> 
+		<div id="fsq-venue-${id}" class="fsq-venue">
+			<p>Name: ${name}</p>
+			{{each categories}} 
+				{{tmpl($value) "#categorie-template"}}
+			{{/each}}
+			{{tmpl(location) "#location-template"}}
+		</div>
+	</script>
+	<script id="location-template" type="text/x-jquery-tmpl">
+		<div class="fsq-location">
+			<p><span class="address">${address}</span>, <span class="city">${city}</span>, <span class="state">${state}</span> <span class="lat">${lat}</span> <span class="lng">${lng}</span></p>			
+		</div>
+	</script>
+	<script id="categorie-template" type="text/x-jquery-tmpl">
+		{{if icon}}
+		<figure class="fsq-categorie fsq-categorie-${id}">
+			<img src="${icon}" width="16" height="16" />
+			<caption>${name}</caption>
+		</figure>
+		{{else}}
+			<div class="fsq-categorie-${id}">${name}</div>
+		{{/if}}
+	</script>
+</body></html>

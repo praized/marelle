@@ -5,8 +5,6 @@ This lib is not ready yet.
 
 TODO 
 
-  - Try prototypal inheritance approach before committing to this first draft.
-  - Templates
   - Examples
   - Docu
   - Qunit
@@ -25,11 +23,23 @@ $.hopscotch
 
 ### method
 
-- $.hopscotch.getCurrentUser( callback )
+- $.hopscotch.getAuthenticatedUser( callback )
 
 - $.hopscotch.startSession()
 
 - $.hopscotch.endSession()
+
+- $.hopscotch.signinButton()
+
+- $.hopscotch.signoutButton()
+
+- $.hopscotch.bind()
+
+- $.hopscotch.unbind()
+
+- $.hopscotch.trigger()
+
+- $.hopscotch.once()
 
 $.hopscotch.User()
 ------------------
@@ -45,24 +55,24 @@ $.hopscotch.User()
 
 ### instance methods
 
-- badges( callback )
+- getBadges( callback )
 
 
-- checkins( params, callback )
+- getCheckins( params, callback )
 
     params: { limit: "", offset: "", afterTimestamp: "", beforeTimestamp: "" }
 
-- friends( callback )
+- getFriends( callback )
 
-- tips( params, callback )
-
-    params: { sort: "", ll: "" }
-
-- todos( params, callback )
+- getTips( params, callback )
 
     params: { sort: "", ll: "" }
 
-- venuehistory( callback )
+- getTodos( params, callback )
+
+    params: { sort: "", ll: "" }
+
+- getVenuehistories( callback )
 
 
 $.hopscotch.Venue()
@@ -82,9 +92,9 @@ $.hopscotch.Venue()
 
 ### instance methods
 
-- herenow( callback )
+- getHerenow( callback )
 
-- tips( params, callback )
+- getTips( params, callback )
 
     params: { sort: "" }
 
