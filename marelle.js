@@ -239,12 +239,12 @@
 
         },
         setToken: function(token) {
-            if (window.localStorage) localStorage.setItem('marelleAuthToken', ( oken === null ? '': token ) );
+            if (window.localStorage) localStorage.setItem('marelleAuthToken', ( token === null ? '': token ) );
             else document.cookie = token === null ? '': 'marelleAuthToken=' + token + '; path=/';
         },
         getToken: function() {
             var token,tokenRE = /marelleAuthToken\=([^\;\s]+)/;
-            if (window.localStorage) token = localStorage.getItem['marelleAuthToken'];
+            if (window.localStorage) token = localStorage.getItem('marelleAuthToken');
             else token = grepFirst(document.cookie, tokenRE);
             if (!!(token)) return token;
         },
