@@ -132,19 +132,19 @@
             return (typeof data === 'undefined' ? JSONPCache[cacheKey] : (JSONPCache[cacheKey] = data));
         },
         get: function() {
-            var opts = JSONP.getOpts(arguments);
-            var url = 'https://api.foursquare.com/v2/' + opts.path;
-            var cached = JSONP.cache(opts);
-            if (cached) return opts.callback(cached);
-            $.getJSON(url + '?callback=?', opts.params,
-            function(json) {
-                if (!json.meta) throw "JSONP response inconsistencies";
-                if (json.meta.code !== 200) return opts.callback(null, json.meta.code + ' ' + json.meta.errorDetail);
-                for (var k in json.response) json.response[k] = Core.decorate(k, json.response[k]);
-                JSONP.cache(opts, json.response);
-                opts.callback(json.response);
-            }
-            );
+            var opts = JSONP.getOpts(arguments),
+                url = 'https://api.foursquare.com/v2/' + opts.path,
+                cached = JSONP.cache(opts);
+                if (cached) return opts.callback(cached);
+                $.getJSON(url + '?callback=?', opts.params,
+                function(json) {
+                    if (!json.meta) throw "JSONP response inconsistencies";
+                    if (json.meta.code !== 200) return opts.callback(null, json.meta.code + ' ' + json.meta.errorDetail);
+                    for (var k in json.response) json.response[k] = Core.decorate(k, json.response[k]);
+                    JSONP.cache(opts, json.response);
+                    opts.callback(json.response);
+                }
+                );
         },
         post: function() {
             var opts = JSONP.getOpts(arguments);
@@ -156,9 +156,9 @@
         modelize: function(parent, recipes) {
             eachKey(recipes,
             function(name) {
-                var recipe = recipes[name]
-                var className = name.classify();
-                var Class = new Function('decorate', 'return function Marelle' + className + '(data) { for(var k in data) this[k]=decorate(k,data[k],this); }')(Core.decorate);
+                var recipe = recipes[name],
+                    className = name.classify(),
+                    Class = new Function('decorate', 'return function Marelle' + className + '(data) { for(var k in data) this[k]=decorate(k,data[k],this); }')(Core.decorate);
                 eachKey(recipe.methods,
                 function(method) {
                     Class[method] = function(params, callback) {
@@ -221,11 +221,11 @@
         },
         // synchronize fragment indentifier auth tokens /w locally stored token
         synchronize: function() {
-            var winhash = window.location.hash;
-            var hashre = {
-                token: /^\#?access_token\=([^\&]+)/,
-                error: /^\#?error\=([^\&]+)/,
-            }
+            var winhash = window.location.hash,
+                hashre = {
+                    token: /^\#?access_token\=([^\&]+)/,
+                    error: /^\#?error\=([^\&]+)/,
+                };
             if (hashre.error.test(winhash)) {
                 window.location.hash = '';
                 throw 'Foursquare Authentication Error: ' + grepFirst(winhash, hashre.error);
@@ -243,27 +243,20 @@
             else document.cookie = token === null ? '': 'marelleAuthToken=' + token + '; path=/';
         },
         getToken: function() {
-            var token;
+            var token,tokenRE = /marelleAuthToken\=([^\;\s]+)/;
             if (window.sessionStorage) token = sessionStorage['marelleAuthToken'];
-            else {
-                var tokenRE = /marelleAuthToken\=([^\;\s]+)/;
-                token = grepFirst(document.cookie, tokenRE);
-            }
-            if ( !! (token)) return token;
+            else token = grepFirst(document.cookie, tokenRE);
+            if (!!(token)) return token;
         },
         clearToken: function() {
             if (window.sessionStorage) sessionStorage.removeItem('marelleAuthToken');
-            else {
-                document.cookie = '';
-            }
+            else document.cookie = '';
         },
         redirect: function(url) {
             if (typeof url === 'undefined') {
                 if (window.location.hash) window.location.href = window.location.href.replace(/^\#.+/, '');
                 else window.location.reload(true);
-            } else {
-                window.location.href = url.replace(/\#$/, '')
-            }
+            } else window.location.href = url.replace(/\#$/, '');
         },
         makeValidator: function(validators) {
             var vfn = [];
