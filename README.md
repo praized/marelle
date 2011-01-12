@@ -42,23 +42,98 @@ $.marelle
 
 ### method
 
-- $.marelle.getAuthenticatedUser( callback )
+- $.marelle.getAuthenticatedUser( ) 
+        
+		// returns a MarelleUser instance
+		
+	    $.marelle.getAuthenticatedUser( ) 
 
 - $.marelle.startSession()
 
+        // redirects browser to foursquare oAuth process
+
+		$.marelle.startSession()
+
 - $.marelle.endSession()
+
+		// clears token and refreshes page 
+		
+		$.marelle.endSession()
 
 - $.marelle.signinButton( containerNodeOrSelector )
 
+      	/* 
+		    Injects a button with proper event 
+		    handlers for startSession() & endSession()
+		    example container markup: 
+				<menu id="auth"></menu>
+		*/
+		
+		$.marelle.signinButton('#auth')
+
 - $.marelle.signoutButton( containerNodeOrSelector  )
+
+		// same as signinButton
+		
+		$.marelle.signoutButton('#auth')		
 
 - $.marelle.bind( eventName, callbackFunction )
 
+		/* 
+		   Binds an event handler "callbackFunction" 
+		   for an event of type "eventName"
+		*/
+		
+		var handler = function( event, user ){
+			// user is a MarelleUser instance
+		};
+		
+		$.marelle.bind( 'connected', handler )
+
 - $.marelle.unbind( eventName, [callbackFunction] )
+
+		/* 
+			Unbinds an event handler "callbackFunction" 
+			for an event of type "eventName"
+		*/
+		
+		var handler = function( event, user ){
+			// user is a MarelleUser instance
+		};
+		
+		$.marelle.unbind( 'connected', handler )
+
 
 - $.marelle.trigger( eventName, [data] )
 
+		/* 
+			Fires an event of type "eventName", 
+			sending it an optional "data" Array;
+		*/
+
+		var user = $.marelle.getAuthenticatedUser( );
+		
+		$.marelle.trigger( 'connected', [ user ] )
+
 - $.marelle.once( eventName, callbackFunction )
+
+		/* 
+		   Binds an event handler "callbackFunction" 
+		   for an event of type "eventName" that
+  		   is only fired once.
+		*/
+		
+		var handler = function( event, user ){
+			// user is a MarelleUser instance
+		};
+		
+		$.marelle.once( 'connected', handler )
+
+### Events
+
+- ready
+- connected
+- disconnected
 
 $.marelle.User()
 ------------------
@@ -69,13 +144,41 @@ $.marelle.User()
 
     params: { phone: , email: , twitter: , twitterSource: , fbid: , name:  }
 
+		/* 
+			Sends a pre-configured JSONP call with supplied parameters
+		*/
+		
+		User.search({name:'quickredfox'},function(response){
+			// MarelleUser instance can be found:
+			doSomethingWith( response.user )
+		});
+
 - User.requests( callback )
 
+		/* 
+			Sends a pre-configured JSONP call.
+		*/
+
+		User.requests(function(response){
+			// response is a decorated json object.
+			doSomethingWith( response.requests )
+		});
 
 ### instance methods
 
 - getBadges( callback )
 
+		/* 
+			Sends a pre-configured JSONP call.
+			... and the rest of the methods pretty
+			much works the same.
+		*/
+		
+		var current = $.marelle.getAuthenticaredUser();
+
+		current.getBadges(function(response){
+			// do something with response
+		})
 
 - getCheckins( params, callback )
 
