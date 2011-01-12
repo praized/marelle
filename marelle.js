@@ -196,7 +196,7 @@
         decorate: function(type, json, parent) {
             var klass = String(type.classify());
             if (parent && typeof json.count !== 'undefined') parent[type + 'Count'] = json.count;
-            if (Marelle[klass]) {
+            if (Marelle[klass] && typeof json === 'object') {
                 if (json.count) {
                     if (json.items) {
                         var nuitems = [];

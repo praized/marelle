@@ -29,3 +29,32 @@
 .marelle-sign-out-button:hover {
    color: #fff;
 }
+
+
+.fsq-user{width:500px;}
+.fsq-user,.fsq-checkin,.fsq-venue,.fsq-location,.fsq-checkins-stack,.fsq-category{
+	position:relative;
+	display:block;float:left;outline:1px dotted #dedede;padding:5px;font-family:sans-serif;
+	margin:0;line-height:1.75em;
+}
+.fsq-user *{margin:0;}
+.fsq-user{
+	background:#f9f9f9;
+}
+.fsq-user > img{position:absolute;top:5px;right:5px;}
+.fsq-checkin{
+	background:#fcfcfc;
+}
+.fsq-venue{
+	background:#f6f6f6;
+}
+.fsq-location{
+	background:#fff;
+}
+.fsq-checkins-stack{
+	background:#f0f0f0;
+}
+.fsq-category{display:inline-block;height:32px;line-height:32px;vertical-align:top;padding:0 10px;}
+.fsq-checkins-stack > *{
+	
+}

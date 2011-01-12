@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title>login example</title>
+	<link rel="stylesheet" href="../shared/marelle.css" type="text/css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  	<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+	<script src="../../vendor/inflection.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../marelle.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+<body>
+	<script type="text/javascript" charset="utf-8">
+		// Supply your foursquare client id
+		 var FSQUARE_CLIENT_ID = 'YOUR_FOURSQUARE_CLIENT_ID_GOES_HERE';
+		// on DOM ready...
+		 $(function() {
+			   // setup with your key and a callback function which 
+			   // receives the Marelle Object ( "M" in this example )
+		       $.marelle( FSQUARE_CLIENT_ID, function( evt, M ){
+					// You can bind listeners for connection/disconnection 
+		           M.bind( 'connected', function(evt, user ){
+					   // Generates a sign-out button and appends to the body
+					   $(document.body).load('./templates.html',function() {
+							$(this).prepend($('#user-template').tmpl(user))
+							M.signoutButton( document.body );
+					   })
+		           } ).bind( 'disconnected', function(){ 
+					   // Generates a sign-in button and appends to the body
+		               M.signinButton( document.body );                                    
+		           } );
+		       });
+		   });
+	</script>
+</body>
+</html>
