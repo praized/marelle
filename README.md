@@ -5,12 +5,13 @@ Use at your own risks and perils, but you are welcome to contribute, share, open
 
 TODO 
 
-  - Update Examples
-  - Update Docs after example updates
-  - Qunit
+  - Moar Examples
+  - Moar Docs
+  - Finish & Make Public Qunit Tests.
   - Decide on browser support
   - Remove hacks for non supported browsers.
   - Remove and Re-Document unsupported calls
+  - Stabilize API? -> I see no way to make it upgradeable if FS API changes.
   - ...amongst other things.
 
 Dependencies:
