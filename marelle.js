@@ -104,11 +104,10 @@
         },
         badges: {},
         mayorships: {}
-    };
-
+    },
     // JSONP handler
-    var JSONPCache = {};
-    var JSONP = {
+    JSONPCache = {},
+    JSONP = {
         getOpts: function(args) {
             var args = Array.prototype.slice.call(args),
                params = {},
@@ -117,7 +116,7 @@
                if (typeof args[(args.length - 1)] === 'object') params = args.pop();
                return {
                    path: args.join('/'),
-                   params: $.extend({},{ oauth_token: Lib.AUTH_TOKEN },params),
+                   params: $.extend({},{ oauth_token: Core.AUTH_TOKEN },params),
                    callback: callback
                }
         },
@@ -138,7 +137,7 @@
                          return opts.callback( null, json.meta.code + ' ' + json.meta.errorDetail);
                     }
                     else{
-                        for(var k in json.response) json.response[k] = Lib.decorate( k, json.response[k] );
+                        for(var k in json.response) json.response[k] = Core.decorate( k, json.response[k] );
                         JSONP.cache( opts, json.response );
                         opts.callback( json.response );
                     } 
@@ -149,15 +148,15 @@
             var opts = JSONP.getOpts(arguments);
             throw ('unsupported!');
         }
-    };
+    },
     // Core 
-    var Lib = {
+    Core = {
         modelize: function (parent, recipes ) {
             eachKey(recipes,
                 function(name) {
                     var recipe = recipes[name]
                     var className = name.classify();
-                    var Class = new Function('decorate', 'return function Marelle' + className + '(data) { for(var k in data) this[k]=decorate(k,data[k],this); }')(Lib.decorate);
+                    var Class = new Function('decorate', 'return function Marelle' + className + '(data) { for(var k in data) this[k]=decorate(k,data[k],this); }')(Core.decorate);
                     eachKey(recipe.methods,
                         function(method) {
                             Class[method] = function(params, callback) {
@@ -203,7 +202,7 @@
             }else if( type === 'groups' ){
                 json.forEach( function( group, idx ) {
                     json[ idx ].items.forEach(function(item, i) {
-                        json[ idx ].items[i] = Lib.decorate('venues',item)
+                        json[ idx ].items[i] = Core.decorate('venues',item)
                     }) 
                 } );
             };
@@ -222,9 +221,9 @@
             }else{
                 if( hashre.token.test( winhash ) ){
                     window.location.hash = '';            
-                    Lib.setToken( grepFirst( winhash, hashre.token ) );            
+                    Core.setToken( grepFirst( winhash, hashre.token ) );            
                 };
-                if( !Lib.AUTH_TOKEN ) Lib.AUTH_TOKEN = Lib.getToken();
+                if( !Core.AUTH_TOKEN ) Core.AUTH_TOKEN = Core.getToken();
             };
 
         },
@@ -274,16 +273,15 @@
             };
         }
 
-    };
-
+    },
     // Public Interface 
-    var Marelle = {
+    Marelle = {
         startSession: function() {
-    	    Lib.redirect("https://foursquare.com/oauth2/authenticate?client_id=" + Lib.CLIENT_ID + "&response_type=token&redirect_uri="+window.location.href.replace(/\#.+/,''));
+    	    Core.redirect("https://foursquare.com/oauth2/authenticate?client_id=" + Core.CLIENT_ID + "&response_type=token&redirect_uri="+window.location.href.replace(/\#.+/,''));
         },
         endSession: function() {
-            Lib.clearToken();
-            Lib.redirect( window.location.href );
+            Core.clearToken();
+            Core.redirect( window.location.href );
         },
         signinButton: function( el ) {
             var holder = $( el||document.body );
@@ -314,13 +312,13 @@
         }
     };
     // Create "Model" objects
-    Lib.modelize( Marelle , API );
+    Core.modelize( Marelle , API );
     // Public API and initialization
     $.extend({
         marelle: function(clid, ready) {
-            Lib.CLIENT_ID = clid || Lib.CLIENT_ID;
+            Core.CLIENT_ID = clid || Core.CLIENT_ID;
             setTimeout(function() {
-                Lib.synchronize( Marelle );
+                Core.synchronize( Marelle );
                 Marelle.trigger('ready', [ Marelle ] );
                 JSONP.get('users', 'self', {},
                 function(json, err) {
