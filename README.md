@@ -1,7 +1,7 @@
 $.marelle() v0.1 unstable, untested
 ===================================
 
-Use at your own risks and perils, but you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.
+Use at your own risks and perils, yet you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.
 
 TODO
 ---- 
