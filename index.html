@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title>Example</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="vendor/inflection.js" type="text/javascript" charset="utf-8"></script>
+	<script src="marelle.js" type="text/javascript" charset="utf-8"></script>
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+</head>
+<body>
+
+	<script type="text/javascript" charset="utf-8">
+		var FSQUARE_CLIENT_ID = 'FY2YR0P3R1FYVY3ZGEYMJJQVJDHK4QMFETEWRMHBOJTE2KNH';
+		 $(function() {
+		       $.marelle( FSQUARE_CLIENT_ID, function(evt, M){
+		           M.bind( 'connected', function(evt, user ){ 
+		               M.signoutButton( document.body );
+		               user.getBadges(function(evt, data) {
+		                   console.debug('gotBadges',evt,data)
+		               })
+		               // M.Venue.search({query:'needium',ll:'45.5874563,-73.5961084'},function(response) {
+		               //     console.debug( 'venue search', response )
+		               // })
+		           } ).bind( 'disconnected', function(){ 
+		               M.signinButton( document.body );                                    
+		           } );                
+		       });
+		   });
+	</script>
+
+</body>
+</html>
