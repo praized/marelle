@@ -3,7 +3,8 @@ $.marelle() v0.1 unstable, untested
 
 Use at your own risks and perils, but you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.
 
-TODO 
+TODO
+---- 
 
   - Moar Examples
   - Moar Docs
@@ -14,18 +15,18 @@ TODO
   - Stabilize API? -> I see no way to make it upgradeable if FS API changes.
   - ...amongst other things.
 
-Dependencies:
+Dependencies
+------------
 
   - [jQuery 1.4.4](http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js)
   - [inflection.js](http://code.google.com/p/inflection-js/)
 
-(un)Known Issues:
+(un)Known Issues
+----------------
 
   - Probably conflicts badly with various location.hash/hashchange implementations, an iframe hack would solve that but I dont think I need it for now, welcomming suggestions. 
   
 *****
-
-
 
 Marelle API
 =============
