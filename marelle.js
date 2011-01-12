@@ -3,7 +3,7 @@
     Version: 0.1 <-- watch out!
     Description: Foursquare API client library.
     Author: Francois Lafortune, @quickredfox
-    
+
     Copyright 2011 PraizedMedia Inc. 
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,15 +19,17 @@
     limitations under the License.
 
 */
-(function() {
-    // Helpers 
-    function grepFirst( str, re ) {
+ (function() {
+    // Helpers
+    function grepFirst(str, re) {
         var m = str.match(re);
-        if(m && m[1]) return m[1];
+        if (m && m[1]) return m[1];
     };
     // sort of like forEach but for objects, only one level deep
-    function eachKey(obj,fn) {
-        for(var k in obj){ fn(k) }
+    function eachKey(obj, fn) {
+        for (var k in obj) {
+            fn(k)
+        }
     };
     // API Structure
     var API = {
@@ -64,7 +66,7 @@
             },
             actions: {
                 marktodo: ['text'],
-                flag: ['problem'], 
+                flag: ['problem'],
                 proposeedit: ['name', 'address', 'crossStreet', 'city', 'state', 'zip', 'phone', 'll', 'primaryCategoryId'],
             },
         },
@@ -110,38 +112,38 @@
     JSONP = {
         getOpts: function(args) {
             var args = Array.prototype.slice.call(args),
-               params = {},
-               callback = function noop() {};
-               if (typeof args[(args.length - 1)] === 'function') callback = args.pop();
-               if (typeof args[(args.length - 1)] === 'object') params = args.pop();
-               return {
-                   path: args.join('/'),
-                   params: $.extend({},{ oauth_token: Core.AUTH_TOKEN },params),
-                   callback: callback
-               }
+            callback = (typeof args[(args.length - 1)] !== 'function' ? function noop() {} : args.pop()),
+            params = (typeof args[(args.length - 1)] !== 'object' ? {}: args.pop());
+            return {
+                path: args.join('/'),
+                params: $.extend({},
+                {
+                    oauth_token: Marelle.AUTH_TOKEN
+                },
+                params),
+                callback: callback
+            }
         },
-        cache: function ( opts, data ) {
-            var cacheKey = JSON.stringify({path:opts.path,params:opts.params});
-            if(typeof data === 'undefined') return JSONPCache[cacheKey];
-            return (JSONPCache[cacheKey] = data);
+        cache: function(opts, data) {
+            var cacheKey = JSON.stringify({
+                path: opts.path,
+                params: opts.params
+            });
+            return (typeof data === 'undefined' ? JSONPCache[cacheKey] : (JSONPCache[cacheKey] = data));
         },
         get: function() {
             var opts = JSONP.getOpts(arguments);
-            var url =  'https://api.foursquare.com/v2/' + opts.path;
-            var cached = JSONP.cache( opts );
-            if(cached) return opts.callback(cached);
-            $.getJSON(url+ '?callback=?', opts.params,
-                function(json) {
-                    if (!json.meta) throw "JSONP response inconsistencies";
-                    if (json.meta.code !== 200){
-                         return opts.callback( null, json.meta.code + ' ' + json.meta.errorDetail);
-                    }
-                    else{
-                        for(var k in json.response) json.response[k] = Core.decorate( k, json.response[k] );
-                        JSONP.cache( opts, json.response );
-                        opts.callback( json.response );
-                    } 
-                }
+            var url = 'https://api.foursquare.com/v2/' + opts.path;
+            var cached = JSONP.cache(opts);
+            if (cached) return opts.callback(cached);
+            $.getJSON(url + '?callback=?', opts.params,
+            function(json) {
+                if (!json.meta) throw "JSONP response inconsistencies";
+                if (json.meta.code !== 200) return opts.callback(null, json.meta.code + ' ' + json.meta.errorDetail);
+                for (var k in json.response) json.response[k] = Core.decorate(k, json.response[k]);
+                JSONP.cache(opts, json.response);
+                opts.callback(json.response);
+            }
             );
         },
         post: function() {
@@ -149,162 +151,175 @@
             throw ('unsupported!');
         }
     },
-    // Core 
+    // Core
     Core = {
-        modelize: function (parent, recipes ) {
+        modelize: function(parent, recipes) {
             eachKey(recipes,
-                function(name) {
-                    var recipe = recipes[name]
-                    var className = name.classify();
-                    var Class = new Function('decorate', 'return function Marelle' + className + '(data) { for(var k in data) this[k]=decorate(k,data[k],this); }')(Core.decorate);
-                    eachKey(recipe.methods,
-                        function(method) {
-                            Class[method] = function(params, callback) {
-                                !(typeof params === 'function') || [(callback = params), (params = {})];
-                                return JSONP.get.call(Class, name, method, params, callback);
-                            };
-                        })
-                    eachKey(recipe.aspects,
-                        function(aspect) {
-                            Class.prototype['get' + aspect.classify().pluralize()] = function(params, callback) {
-                                !(typeof params === 'function') || [(callback = params), (params = {})];
-                                return JSONP.get.call(this, name, this.id, aspect, params, callback);
-                            }
-                        });
-                    eachKey(recipe.actions,
-                        function(action) {
-                            Class.prototype[action] = function(id, params, callback) {
-                                !(typeof params === 'function') || [(callback = params), (params = {})];
-                                return JSONP.post.call(this, name, id, action, params, callback);
-                            }
-                        });
-                    parent[className] = Class;
+            function(name) {
+                var recipe = recipes[name]
+                var className = name.classify();
+                var Class = new Function('decorate', 'return function Marelle' + className + '(data) { for(var k in data) this[k]=decorate(k,data[k],this); }')(Core.decorate);
+                eachKey(recipe.methods,
+                function(method) {
+                    Class[method] = function(params, callback) {
+                        if (typeof params === 'function') {
+                            callback = params,
+                            params = {}
+                        }
+                        return JSONP.get.call(Class, name, method, params, callback);
+                    };
+                })
+                eachKey(recipe.aspects,
+                function(aspect) {
+                    Class.prototype['get' + aspect.classify().pluralize()] = function(params, callback) {
+                        if (typeof params === 'function') {
+                            callback = params,
+                            params = {}
+                        }
+                        return JSONP.get.call(this, name, this.id, aspect, params, callback);
+                    }
+                });
+                eachKey(recipe.actions,
+                function(action) {
+                    Class.prototype[action] = function(id, params, callback) {
+                        if (typeof params === 'function') {
+                            callback = params,
+                            params = {}
+                        }
+                        return JSONP.post.call(this, name, id, action, params, callback);
+                    }
+                });
+                parent[className] = Class;
             });
             return parent;
         },
-        decorate: function ( type, json, parent ) {
-            var klass = String(type.classify());    
-            if(parent && typeof json.count !== 'undefined') parent[type+'Count'] = json.count;   
-            if( Marelle[klass] ){
-                if(json.count){
-                    if(json.items){
+        decorate: function(type, json, parent) {
+            var klass = String(type.classify());
+            if (parent && typeof json.count !== 'undefined') parent[type + 'Count'] = json.count;
+            if (Marelle[klass]) {
+                if (json.count) {
+                    if (json.items) {
                         var nuitems = [];
                         json.items.forEach(function(item) {
-                            nuitems.push( new Marelle[ klass ]( item ) );                                
-                        })
+                            nuitems.push(new Marelle[klass](item))
+                        });
                         json.items = nuitems;
                     }
                     return json;
-                }else{
+                } else {
                     var m = new Marelle[klass](json);
-                    return m                    
+                    return m
                 }
-            }else if( type === 'groups' ){
-                json.forEach( function( group, idx ) {
-                    json[ idx ].items.forEach(function(item, i) {
-                        json[ idx ].items[i] = Core.decorate('venues',item)
-                    }) 
-                } );
+            } else if (type === 'groups') {
+                json.forEach(function(group, idx) {
+                    json[idx].items.forEach(function(item, i) {
+                        json[idx].items[i] = Core.decorate('venues', item)
+                    })
+                });
             };
             return json;
         },
         // synchronize fragment indentifier auth tokens /w locally stored token
-        synchronize: function () {
+        synchronize: function() {
             var winhash = window.location.hash;
             var hashre = {
                 token: /^\#?access_token\=([^\&]+)/,
                 error: /^\#?error\=([^\&]+)/,
             }
-            if( hashre.error.test( winhash ) ){
+            if (hashre.error.test(winhash)) {
                 window.location.hash = '';
-                throw 'Foursquare Authentication Error: '+grepFirst( winhash, hashre.error );
-            }else{
-                if( hashre.token.test( winhash ) ){
-                    window.location.hash = '';            
-                    Core.setToken( grepFirst( winhash, hashre.token ) );            
+                throw 'Foursquare Authentication Error: ' + grepFirst(winhash, hashre.error);
+            } else {
+                if (hashre.token.test(winhash)) {
+                    window.location.hash = '';
+                    Core.setToken(grepFirst(winhash, hashre.token));
                 };
-                if( !Core.AUTH_TOKEN ) Core.AUTH_TOKEN = Core.getToken();
+                if (!Marelle.AUTH_TOKEN) Marelle.AUTH_TOKEN = Core.getToken();
             };
 
         },
-        setToken: function( token ) {
-            if(window.sessionStorage) sessionStorage['marelleAuthToken'] = token === null ? '' : token;
-            else document.cookie = token === null ? '' : 'marelleAuthToken='+token+'; path=/';
+        setToken: function(token) {
+            if (window.sessionStorage) sessionStorage['marelleAuthToken'] = token === null ? '': token;
+            else document.cookie = token === null ? '': 'marelleAuthToken=' + token + '; path=/';
         },
         getToken: function() {
             var token;
-            if(window.sessionStorage) token = sessionStorage['marelleAuthToken'];
-            else{
+            if (window.sessionStorage) token = sessionStorage['marelleAuthToken'];
+            else {
                 var tokenRE = /marelleAuthToken\=([^\;\s]+)/;
-                token = grepFirst( document.cookie,  tokenRE );
+                token = grepFirst(document.cookie, tokenRE);
             }
-            if(!!(token)) return token;
+            if ( !! (token)) return token;
         },
         clearToken: function() {
-          if(window.sessionStorage) sessionStorage.removeItem('marelleAuthToken');
-          else{
-              document.cookie = '';
-          }
+            if (window.sessionStorage) sessionStorage.removeItem('marelleAuthToken');
+            else {
+                document.cookie = '';
+            }
         },
-        redirect: function( url ) {
-            if(typeof url === 'undefined'){
-                if(window.location.hash) window.location.href = window.location.href.replace(/^\#.+/,'');
-                else window.location.reload(true) ;
-            }else{
-                 window.location.href = url.replace(/\#$/,'')
+        redirect: function(url) {
+            if (typeof url === 'undefined') {
+                if (window.location.hash) window.location.href = window.location.href.replace(/^\#.+/, '');
+                else window.location.reload(true);
+            } else {
+                window.location.href = url.replace(/\#$/, '')
             }
         },
         makeValidator: function(validators) {
             var vfn = [];
-            validators.forEach( function( validator ) {
-                if( ( /\!$/ ).test( validator ) ){
+            validators.forEach(function(validator) {
+                if ((/\!$/).test(validator)) {
                     vfn.push(function(params) {
-                        if( !(params[ validator.replace(/\!$/,'') ]) ) throw ('Missing HTTP Parameter: '+val);
+                        if (! (params[validator.replace(/\!$/, '')])) throw ('Missing HTTP Parameter: ' + val);
                     });
                 };
-            } );
+            });
             return function isValid(params) {
                 var self = arguments.callee;
                 self.errors = [];
-                vfn.forEach( function( fn ){
-                    try{ fn( params) }catch( E ){ self.errors.push( E ) };
-                } );
-                return ( self.errors.length === 0 );
+                vfn.forEach(function(fn) {
+                    try {
+                        fn(params)
+                    } catch(E) {
+                        self.errors.push(E)
+                    };
+                });
+                return (self.errors.length === 0);
             };
         }
 
     },
-    // Public Interface 
+    // Public Interface
     Marelle = {
         startSession: function() {
-    	    Core.redirect("https://foursquare.com/oauth2/authenticate?client_id=" + Core.CLIENT_ID + "&response_type=token&redirect_uri="+window.location.href.replace(/\#.+/,''));
+            Core.redirect("https://foursquare.com/oauth2/authenticate?client_id=" +Marelle.CLIENT_ID + "&response_type=token&redirect_uri=" + window.location.href.replace(/\#.+/, ''));
         },
         endSession: function() {
             Core.clearToken();
-            Core.redirect( window.location.href );
+            Core.redirect(window.location.href);
         },
-        signinButton: function( el ) {
-            var holder = $( el||document.body );
-            return $('<a class="marelle-sign-in-button" href="#">click to connect to foursquare</a>').bind('click', Marelle.startSession).appendTo(holder)     
+        signinButton: function(el) {
+            var holder = $(el || document.body);
+            return $('<a class="marelle-sign-in-button" href="#">click to connect to foursquare</a>').bind('click', Marelle.startSession).appendTo(holder)
         },
-        signoutButton: function( el ) { 
-            var holder = $( el||document.body );		
-            return 	$('<a class="marelle-sign-out-button" href="#">click to disconnect from foursquare</a>').bind('click',Marelle.endSession).appendTo(holder)        
+        signoutButton: function(el) {
+            var holder = $(el || document.body);
+            return $('<a class="marelle-sign-out-button" href="#">click to disconnect from foursquare</a>').bind('click', Marelle.endSession).appendTo(holder)
         },
-        bind:  function(n,fn) {
-            $( Marelle ).bind( n, fn );
+        bind: function(n, fn) {
+            $(Marelle).bind(n, fn);
             return Marelle;
         },
-        unbind: function(n,fn) {
-            $( Marelle ).unbind( n, fn );
-            return Marelle;            
-        },
-        trigger: function(n,data) {
-            $( Marelle ).trigger( n, data );
+        unbind: function(n, fn) {
+            $(Marelle).unbind(n, fn);
             return Marelle;
-        },    
-        once:function(n,fn) {
-            $( Marelle ).one( n, fn );
+        },
+        trigger: function(n, data) {
+            $(Marelle).trigger(n, data);
+            return Marelle;
+        },
+        once: function(n, fn) {
+            $(Marelle).one(n, fn);
             return Marelle;
         },
         getAuthenticatedUser: function() {
@@ -312,27 +327,25 @@
         }
     };
     // Create "Model" objects
-    Core.modelize( Marelle , API );
+    Core.modelize(Marelle, API);
     // Public API and initialization
     $.extend({
         marelle: function(clid, ready) {
-            Core.CLIENT_ID = clid || Core.CLIENT_ID;
+           Marelle.CLIENT_ID = clid ||Marelle.CLIENT_ID;
             setTimeout(function() {
-                Core.synchronize( Marelle );
-                Marelle.trigger('ready', [ Marelle ] );
+                Core.synchronize(Marelle);
+                Marelle.trigger('ready', [Marelle]);
                 JSONP.get('users', 'self', {},
                 function(json, err) {
-                    if (json !== null) {
-                        Marelle.User.current = json.user;
-                        Marelle.trigger( 'connected', [ Marelle.User.current ] );
-                    }else{
-                        Marelle.trigger( 'disconnected' );
-                    };
+                    return (json === null ?
+                    Marelle.trigger('disconnected') :
+                    Marelle.trigger('connected', [(Marelle.User.current = json.user)])
+                    );
                 });
             });
-            if (typeof ready === 'function') Marelle.bind( 'ready', ready );
+            if (typeof ready === 'function') Marelle.bind('ready', ready);
             return Marelle;
         }
     });
-    $.extend( $.marelle, Marelle );
+    $.extend($.marelle, Marelle);
 })();
