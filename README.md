@@ -26,6 +26,11 @@ Dependencies
 
   - Probably conflicts badly with various location.hash/hashchange implementations, an iframe hack would solve that but I don't think I need it for now, welcoming suggestions. 
   
+Usage
+-----
+
+  - All the fun is in learning, if the files in /example are not enough for you to understand, I'll be glad to [answer your questions](https://github.com/praized/hopscotch/issues/labels/question)  
+
 *****
 
 Marelle API
