@@ -48,17 +48,17 @@ $.marelle
 
 - $.marelle.endSession()
 
-- $.marelle.signinButton()
+- $.marelle.signinButton( containerNodeOrSelector )
 
-- $.marelle.signoutButton()
+- $.marelle.signoutButton( containerNodeOrSelector  )
 
-- $.marelle.bind()
+- $.marelle.bind( eventName, callbackFunction )
 
-- $.marelle.unbind()
+- $.marelle.unbind( eventName, [callbackFunction] )
 
-- $.marelle.trigger()
+- $.marelle.trigger( eventName, [data] )
 
-- $.marelle.once()
+- $.marelle.once( eventName, callbackFunction )
 
 $.marelle.User()
 ------------------
@@ -101,7 +101,7 @@ $.marelle.Venue()
 
 - Venue.add( params, callback )
 
-    params: { name: , address: , crossStreet: , city: , state: , zip: , phone: , ll: , primaryCategoryId:  }
+    params: { name: , address: , crossStreet: , city: , state: , zip: , phone: , ll: required , primaryCategoryId:  }
 
 - Venue.categories( callback )
 
