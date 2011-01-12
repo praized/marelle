@@ -27,10 +27,11 @@ Dependencies
   - Probably conflicts badly with various location.hash/hashchange implementations, an iframe hack would solve that but I don't think I need it for now, welcoming suggestions. 
   - POST methods (actions) are not currently implemented due to transport limitations.
 
-Usage
------
+Questions/Issues
+----------------
 
-  - All the fun is in learning, if the files in /example are not enough for you to understand, I'll be glad to [answer your questions](https://github.com/praized/hopscotch/issues/labels/question)  
+  - [ask questions here](https://github.com/praized/hopscotch/issues/labels/question)
+  - [open issues here](https://github.com/praized/hopscotch/issues)
 
 *****
 
