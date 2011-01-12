@@ -239,17 +239,17 @@
 
         },
         setToken: function(token) {
-            if (window.sessionStorage) sessionStorage['marelleAuthToken'] = token === null ? '': token;
+            if (window.localStorage) localStorage.setItem('marelleAuthToken', ( oken === null ? '': token ) );
             else document.cookie = token === null ? '': 'marelleAuthToken=' + token + '; path=/';
         },
         getToken: function() {
             var token,tokenRE = /marelleAuthToken\=([^\;\s]+)/;
-            if (window.sessionStorage) token = sessionStorage['marelleAuthToken'];
+            if (window.localStorage) token = localStorage.getItem['marelleAuthToken'];
             else token = grepFirst(document.cookie, tokenRE);
             if (!!(token)) return token;
         },
         clearToken: function() {
-            if (window.sessionStorage) sessionStorage.removeItem('marelleAuthToken');
+            if (window.localStorage) localStorage.removeItem('marelleAuthToken');
             else document.cookie = '';
         },
         redirect: function(url) {
