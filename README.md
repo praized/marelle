@@ -33,6 +33,11 @@ Questions/Issues
   - [ask questions here](https://github.com/praized/hopscotch/issues/labels/question)
   - [open issues here](https://github.com/praized/hopscotch/issues)
 
+Fiddle
+------
+
+ - [Js Fiddle example](http://fiddle.jshell.net/quickredfox/kBrhM/15/show)
+
 *****
 
 Marelle API

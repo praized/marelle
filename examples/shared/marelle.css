@@ -31,7 +31,7 @@
 }
 
 
-.fsq-user{width:500px;}
+.fsq-user,.fsq-venue{width:500px;}
 .fsq-user,.fsq-checkin,.fsq-venue,.fsq-location,.fsq-checkins-stack,.fsq-category{
 	position:relative;
 	display:block;float:left;outline:1px dotted #dedede;padding:5px;font-family:sans-serif;
@@ -58,3 +58,5 @@
 .fsq-checkins-stack > *{
 	
 }
+
+section{display:block;float:left;}
