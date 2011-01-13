@@ -35,8 +35,13 @@
     var API = {
         users: {
             methods: {
-                search: ['phone', 'email', 'twitter', 'twitterSource', 'fbid', 'name'],
-                requests: []
+                search: {
+                    http: 'POST',
+                    params: ['phone', 'email', 'twitter', 'twitterSource', 'fbid', 'name']
+                },
+                requests: {
+                    http: 'GET'
+                }
             },
             aspects: {
                 badges: [],
@@ -72,7 +77,10 @@
         },
         checkins: {
             methods: {
-                add: ['venueId', 'venue', 'shout', 'broadcast', 'll', 'llAcc', 'alt', 'altAcc'],
+                add: {
+                    http: 'POST',
+                    params: ['venueId', 'venue', 'shout', 'broadcast', 'll', 'llAcc', 'alt', 'altAcc']
+                },
                 recent: ['ll', 'limit', 'offset', 'afterTimestamp']
             },
             actions: {
@@ -107,20 +115,18 @@
         badges: {},
         mayorships: {}
     },
-    // JSONP handler
-    JSONPCache = {},
-    JSONP = {
+    // AJAX handler
+    AJAXCache = {},
+    AJAX = {
         getOpts: function(args) {
             var args = Array.prototype.slice.call(args),
-            callback = (typeof args[(args.length - 1)] !== 'function' ? function noop() {} : args.pop()),
-            params = (typeof args[(args.length - 1)] !== 'object' ? {}: args.pop());
+                method = args.shift(),
+                callback = (typeof args[(args.length - 1)] !== 'function' ? function noop() {} : args.pop()),
+                params = (typeof args[(args.length - 1)] !== 'object' ? {}: args.pop());
             return {
                 path: args.join('/'),
-                params: $.extend({},
-                {
-                    oauth_token: Marelle.AUTH_TOKEN
-                },
-                params),
+                method: method.toUpperCase(),
+                params: $.extend({}, params , { oauth_token: Marelle.AUTH_TOKEN }),
                 callback: callback
             }
         },
@@ -129,26 +135,28 @@
                 path: opts.path,
                 params: opts.params
             });
-            return (typeof data === 'undefined' ? JSONPCache[cacheKey] : (JSONPCache[cacheKey] = data));
+            return (typeof data === 'undefined' ? AJAXCache[cacheKey] : (AJAXCache[cacheKey] = data));
         },
-        get: function() {
-            var opts = JSONP.getOpts(arguments),
-                url = 'https://api.foursquare.com/v2/' + opts.path,
-                cached = JSONP.cache(opts);
+        request: function() {
+            var opts = AJAX.getOpts(arguments),
+                cached = AJAX.cache(opts),
+                url = 'https://api.foursquare.com/v2/' + opts.path + ( opts.method === 'GET' ? '?callback=?' : '' );
                 if (cached) return opts.callback(cached);
-                $.getJSON(url + '?callback=?', opts.params,
-                function(json) {
-                    if (!json.meta) throw "JSONP response inconsistencies";
-                    if (json.meta.code !== 200) return opts.callback(null, json.meta.code + ' ' + json.meta.errorDetail);
-                    for (var k in json.response) json.response[k] = Core.decorate(k, json.response[k]);
-                    JSONP.cache(opts, json.response);
-                    opts.callback(json.response);
+                else{
+                    $.ajax({
+                        type: opts.method,
+                        url: url,
+                        data: opts.params,
+                        success: function(json) {
+                             if ( !json.meta ) throw "AJAX response inconsistencies";
+                             if ( json.meta.code !== 200 ) return opts.callback( null, json.meta.code + ' ' + json.meta.errorDetail );
+                             for(var k in json.response) json.response[ k ] = Core.decorate( k, json.response[ k ] );
+                             AJAX.cache( opts, json.response );
+                             opts.callback( json.response );
+                        },
+                        dataType: ( opts.method === 'GET' ? 'jsonp' : 'json' )
+                    })                    
                 }
-                );
-        },
-        post: function() {
-            var opts = JSONP.getOpts(arguments);
-            throw ('unsupported!');
         }
     },
     // Core
@@ -161,32 +169,35 @@
                     Class = new Function('decorate', 'return function Marelle' + className + '(data) { for(var k in data) this[k]=decorate(k,data[k],this); }')(Core.decorate);
                 eachKey(recipe.methods,
                 function(method) {
+                    var http = (recipe.methods[method].http ? recipe.methods[method].http.toLowerCase() : 'get' );
                     Class[method] = function(params, callback) {
                         if (typeof params === 'function') {
                             callback = params,
                             params = {}
                         }
-                        return JSONP.get.call(Class, name, method, params, callback);
+                        return AJAX.request.call(Class, http, name, method, params, callback);
                     };
                 })
                 eachKey(recipe.aspects,
                 function(aspect) {
+                    var http = (recipe.aspects[aspect].http ? recipe.aspects[aspect].http.toLowerCase() : 'get' );
                     Class.prototype['get' + aspect.classify().pluralize()] = function(params, callback) {
                         if (typeof params === 'function') {
                             callback = params,
                             params = {}
                         }
-                        return JSONP.get.call(this, name, this.id, aspect, params, callback);
+                        return AJAX.request.call(this, http, name, this.id, aspect, params, callback);
                     }
                 });
                 eachKey(recipe.actions,
                 function(action) {
+                    var http = (recipe.actions[action].http ? recipe.actions[action].http.toLowerCase() : 'get' );                    
                     Class.prototype[action] = function(id, params, callback) {
                         if (typeof params === 'function') {
                             callback = params,
                             params = {}
                         }
-                        return JSONP.post.call(this, name, id, action, params, callback);
+                        return AJAX.request.call(this, http, name, id, action, params, callback);
                     }
                 });
                 parent[className] = Class;
@@ -328,7 +339,7 @@
             setTimeout(function() {
                 Core.synchronize(Marelle);
                 Marelle.trigger('ready', [Marelle]);
-                JSONP.get('users', 'self', {},
+                AJAX.request('get','users', 'self', {},
                 function(json, err) {
                     return (json === null ?
                     Marelle.trigger('disconnected') :
