@@ -25,7 +25,7 @@ Dependencies
 ----------------
 
   - Probably conflicts badly with various location.hash/hashchange implementations, an iframe hack would solve that but I don't think I need it for now, welcoming suggestions. 
-  - POST methods (actions) are not currently implemented due to transport limitations.
+  - <strike>POST methods (actions) are not currently implemented due to transport limitations.</strike> Works with CORS if Authenticated
 
 Questions/Issues
 ----------------
