@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title></title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../inflection.js" type="text/javascript" charset="utf-8"></script>	
+	<script src="../marelle.js" type="text/javascript" charset="utf-8"></script>
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->    
+	<script type="text/javascript" charset="utf-8">
+		var DEBUG = true;
+		var LL;
+
+		$(function() {
+		
+			navigator.geolocation.getCurrentPosition(function(position) {
+		    	$(document).trigger('visitorLL',[position.coords.latitude,position.coords.longitude]);
+		    });		    
+		});
+
+		function makeEntity( merchant, fetchers ){
+				var fnode,mnode = $('<td class="praized">'+[merchant.name,merchant.location.street_address].join(', ')+'</td>').data('merchant',merchant);
+				fetchers.push(function(next) {
+					var params = {ll:LL};
+					$.marelle.Venue.search( params, function( response ){
+						var group = response.groups[ 1 ]||response.groups[ 0 ];
+							fnode = $('<td class="foursquare">'),collector = $('<ul>').appendTo( fnode );
+						group.items.forEach( function( venue ) {
+							var mkup = $('<li>'+venue.name+'</li>').data('venue',venue);
+							collector.append(mkup);
+						} );
+						var row = $('<tr>').append(mnode,fnode);
+						$('#outputs table').append(row);
+						next();						
+					});
+				});				
+		};
+		function startFetching( fetchers, whendone ) {
+			var fetcher = fetchers.shift(),
+				next    = fetchers.shift();
+			if( !fetcher) return whendone();
+			if( !next ) fetcher(whendone);
+			else fetcher(function() {
+				startFetching( fetchers, whendone );
+			});
+		};
+
+		$(document).bind('visitorLL',function(event,latitude,longitude) {
+			var FSQUARE_CLIENT_ID = 'CQNYUACMANEXA124BE5ANZ3FJMDZX2ITACMODYWAWFD10FIM';
+		    $.marelle(FSQUARE_CLIENT_ID,
+		    function(evt, M) {
+		        M.bind('connected',
+		        function(evt, user) {
+		            M.signoutButton('#mast');
+					LL = latitude+','+longitude;
+					var url = 'http://api.praized.com/praized-com-hub/merchants.json'+
+							  '?api_key=9af71fc55a26e7d6f5017dcd243502fb&use_field=geo&lat='+
+							  latitude+'&long='+longitude+'&radius=50&callback=?',
+						fetchers = [];
+					$.getJSON( url ,function(json) { 
+						json.praized.merchants.forEach(function(merchant) {
+							makeEntity(merchant,fetchers);
+						});
+						startFetching( fetchers, function() {
+							console.debug('FINISHED')
+						} );
+					 });
+
+		        }).bind('disconnected',
+		        function() {
+		            M.signinButton('#mast');
+		        });
+		    });
+		});
+		
+
+	</script>
+</head>
+<body>
+	<div id="mast">
+		
+	</div>
+	<div id="outputs">
+		<table></table>
+	</div>
+	
+</body>
+</html>
