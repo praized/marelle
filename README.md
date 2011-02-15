@@ -30,8 +30,8 @@ Dependencies
 Questions/Issues
 ----------------
 
-  - [ask questions here](https://github.com/praized/hopscotch/issues/labels/question)
-  - [open issues here](https://github.com/praized/hopscotch/issues)
+  - [ask questions here](https://github.com/praized/marelle/issues/labels/question)
+  - [open issues here](https://github.com/praized/marelle/issues)
 
 Fiddle
 ------
