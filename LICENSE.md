@@ -1,7 +1,8 @@
-$.Marelle() v0.1
+$.Marelle() v0.2
 ================
 
-Foursquare API client library, developed by Francois Lafortune, [@quickredfox][twitter].
+Foursquare API client library for Javascript, meant to be used qith jquery 1.5+, written in coffeescript.
+Authored by Francois Lafortune, [@quickredfox][twitter].
 
 	Copyright 2011 PraizedMedia Inc. 
 

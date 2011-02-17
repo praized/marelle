@@ -4,30 +4,40 @@
 	<meta charset=utf-8 />
 	<title>login example</title>
 	<link rel="stylesheet" href="../shared/marelle.css" type="text/css">
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../../vendor/inflection.js" type="text/javascript" charset="utf-8"></script>
-	<script src="../../marelle.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../build/marelle.min.js" type="text/javascript" charset="utf-8"></script>	
+	<!--<script src="../../lib/api.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../lib/xhr.js" type="text/javascript" charset="utf-8"></script>	
+	<script src="../../lib/core.js" type="text/javascript" charset="utf-8"></script>		-->
 
 </head>
 <body>
 	<script type="text/javascript" charset="utf-8">
 		// Supply your foursquare client id
-		 var FSQUARE_CLIENT_ID = 'YOUR_FOURSQUARE_CLIENT_ID_GOES_HERE';
+		 var FSQUARE_CLIENT_ID = 'CQNYUACMANEXA124BE5ANZ3FJMDZX2ITACMODYWAWFD10FIM';
 		// on DOM ready...
 		 $(function() {
 			   // setup with your key and a callback function which 
 			   // receives the Marelle Object ( "M" in this example )
-		       $.marelle( FSQUARE_CLIENT_ID, function( evt, M ){
-					// You can bind listeners for connection/disconnection 
-		           M.bind( 'connected', function(evt, user ){
-					   // Generates a sign-out button and appends to the body
-		               M.signoutButton( document.body );
-						console.log(user) // ex
-		           } ).bind( 'disconnected', function(){ 
-					   // Generates a sign-in button and appends to the body
-		               M.signinButton( document.body );                                    
-		           } );
-		       });
+			   $.Marelle( FSQUARE_CLIENT_ID ).done( function( M ){
+					// grab an authentication promise 
+				   var authpromise = M.authenticateVisitor();
+				   //  handle logged-in user
+				   var authsuccess = function(user){
+					   M.signoutButton( document.body );
+					   console.log(user)
+				   };
+				   // handle non user 
+				   var authfailure = function() {
+					   M.signinButton( document.body );
+				   };
+				   // wait for promise to resolve
+				   authpromise.then(authsuccess,authfailure)
+				
+			   }).fail(function(){
+					consoloe.log('Marelle could not be loaded.')
+			   });
 		   });
 	</script>
 </body>

@@ -1,291 +1,190 @@
-$.marelle() v0.1 unstable, untested
-===================================
+$.Marelle() v0.2 unstable, untested
+============================================================================================================
 
 Use at your own risks and perils, yet you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.
 
 TODO
----- 
+--------------------------------------------------------------------------------------------------------- 
 
-  - Moar Examples
-  - Moar Docs
   - Finish & Make Public Qunit Tests.
-  - Decide on browser support
-  - Remove hacks for non supported browsers.
-  - Remove and Re-Document unsupported calls
-  - Stabilize API? -> I see no way to make it upgradeable if FS API changes.
   - ...amongst other things.
 
 Dependencies
-------------
+---------------------------------------------------------------------------------------------------------
 
-  - [jQuery 1.4.4](http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js)
-  - [inflection.js](http://code.google.com/p/inflection-js/)
+  - <del>[jQuery 1.4.4](http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js)</del> (deprecated, use 1.5+)
+  - <ins>[jQuery 1.5](http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js)</ins>
+  - [inflection.js](http://code.google.com/p/inflection-js/) provided in /vendor
 
 (un)Known Issues
-----------------
+---------------------------------------------------------------------------------------------------------
 
-  - Probably conflicts badly with various location.hash/hashchange implementations, an iframe hack would solve that but I don't think I need it for now, welcoming suggestions. 
-  - <strike>POST methods (actions) are not currently implemented due to transport limitations.</strike> Works with CORS if Authenticated
+  - Will conflict with various location.hash/hashchange implementations.
+  - Works exclusively using Cross-Origin Resource Sharing (CORS)
 
 Questions/Issues
-----------------
+---------------------------------------------------------------------------------------------------------
 
   - [ask questions here](https://github.com/praized/marelle/issues/labels/question)
   - [open issues here](https://github.com/praized/marelle/issues)
 
 Fiddle
-------
+---------------------------------------------------------------------------------------------------------
 
- - [Js Fiddle example](http://fiddle.jshell.net/quickredfox/kBrhM/15/show)
+ - [(possibly outdated and broken) Js Fiddle example](http://fiddle.jshell.net/quickredfox/kBrhM/15/show)
 
 *****
 
-Marelle API
-=============
-
-$.marelle
----------
-
-### method
+Marelle API v0.2
+============================================================================================================
+
+Note: Lotsa lotsa changes, mainly though events have been removed, use promises instead.
+
+Methods
+============================================================================================================
+
+Marelle exports some of it's methods to jQuery through the $.Marelle variable.
+
+$.Marelle( clientID )
+---------------------------------------------------------------------------------------------------------
+
+	Triggers Marelle initialization and returns a promise that 
+	will resolve to the completely initialized Marelle object.
+
+	@param {String} clientId - Your Foursquare API Client ID
+
+$.Marelle.authenticateVisitor(  )
+---------------------------------------------------------------------------------------------------------
+
+	Triggers authentication verifications and returns a promise 
+	that will resolve as the Marelle.Visitor user instance or be
+	rejected (means visitor not connected to fsquare)
+
+$.Marelle.startSession(  )
+---------------------------------------------------------------------------------------------------------
 
-- $.marelle.getAuthenticatedUser( ) 
-        
-		// returns a MarelleUser instance
-		
-	    $.marelle.getAuthenticatedUser( ) 
+	Redirects to the foursquare login.
+	
+$.Marelle.endSession(  )
+---------------------------------------------------------------------------------------------------------
 
-- $.marelle.startSession()
+	Clears the session.
+	
+$.Marelle.signinButton( selector )
+---------------------------------------------------------------------------------------------------------
+
+	Appends a "connect" button to the provided selector
+	
+	@param {jQuery} selector - Selector or Element or jQuery object 
 
-        // redirects browser to foursquare oAuth process
-
-		$.marelle.startSession()
+$.Marelle.signoutButton( selector )
+---------------------------------------------------------------------------------------------------------
 
-- $.marelle.endSession()
+	Appends a "disconnect" button to the provided selector
+	
+	@param {jQuery} selector - Selector or Element or jQuery object 
+	
+Modeled Objects
+============================================================================================================
 
-		// clears token and refreshes page 
-		
-		$.marelle.endSession()
+Every time an AJAX request is made to the FourSquare API through Marelle, 
+the returned JSON object gets decorated using a JSON representation of 
+the FourSquare API documentation augmented with some fetcher methods during 
+Marelle's internal initialization. This means that all these methods resolve 
+to the original FourSquare API response structure with "meta" and "response" 
+as the first level attributes. Marelle also decorates parent objects with 
+a {attribute}Count variable whenever it encounters a collection of items
+when recognizably structured so by the foursquare API.
 
-- $.marelle.signinButton( containerNodeOrSelector )
+$.Marelle.User(json)
+---------------------------------------------------------------------------------------------------------
 
-      	/* 
-		    Injects a button with proper event 
-		    handlers for startSession() & endSession()
-		    example container markup: 
-				<menu id="auth"></menu>
-		*/
-		
-		$.marelle.signinButton('#auth')
+### Methods
+	
+	search( params ) // {'phone', 'email', 'twitter', 'twitterSource', 'fbid', 'name'}
+	requests()
+	
+### Aspects
 
-- $.marelle.signoutButton( containerNodeOrSelector  )
+	getBages()
+	getCheckins( params ) // {'limit', 'offset', 'afterTimestamp', 'beforeTimestamp'}
+	getFriends()
+	getTips( params ) // {'sort', 'll'}
+	getTodos( params ) // {'sort', 'll'}
+	getVenuehistories()
 
-		// same as signinButton
-		
-		$.marelle.signoutButton('#auth')		
+### Actions
 
-- $.marelle.bind( eventName, callbackFunction )
+	request()
+	unfriend()
+	approve()
+	deny()
+	setpings( params ) // {'value'}
 
-		/* 
-		   Binds an event handler "callbackFunction" 
-		   for an event of type "eventName"
-		*/
-		
-		var handler = function( event, user ){
-			// user is a MarelleUser instance
-		};
-		
-		$.marelle.bind( 'connected', handler )
+$.Marelle.Venue(json)
+---------------------------------------------------------------------------------------------------------
 
-- $.marelle.unbind( eventName, [callbackFunction] )
+### Methods
+	
+	add( params ) // {name:, address:, crossStreet:, city:, state:, zip:, phone:, ll:, primaryCategoryId:}
+				
+	categories()
+	
+	search( params ) // {ll:, llAcc:, alt:, altAcc:, query:, limit:, intent:}
 
-		/* 
-			Unbinds an event handler "callbackFunction" 
-			for an event of type "eventName"
-		*/
-		
-		var handler = function( event, user ){
-			// user is a MarelleUser instance
-		};
-		
-		$.marelle.unbind( 'connected', handler )
+### Aspects
 
+	getHerenow()
+	
+	getTips( params ) // {sort:}
+	
+### Actions
+	
+	marktodo( params ) // {text:}
+	flag( params ) // {problem:}
+	proposeedit() // {name:, address:, crossStreet:, city:, state:, zip:, phone:, ll:, primaryCategoryId:}
 
-- $.marelle.trigger( eventName, [data] )
+$.Marelle.Checkin(json)
+---------------------------------------------------------------------------------------------------------
 
-		/* 
-			Fires an event of type "eventName", 
-			sending it an optional "data" Array;
-		*/
+### Methods
 
-		var user = $.marelle.getAuthenticatedUser( );
-		
-		$.marelle.trigger( 'connected', [ user ] )
+	add( params ) // {venueId:, venue:, shout:, broadcast:, ll:, llAcc:, alt:, altAcc:}
+	recent( params ) // {ll:, limit:, offset:, afterTimestamp:}
 
-- $.marelle.once( eventName, callbackFunction )
+### Actions
 
-		/* 
-		   Binds an event handler "callbackFunction" 
-		   for an event of type "eventName" that
-  		   is only fired once.
-		*/
-		
-		var handler = function( event, user ){
-			// user is a MarelleUser instance
-		};
-		
-		$.marelle.once( 'connected', handler )
+	addcomment( params ) // {text:}
+	deletecomment( params ) // {commentId:}
 
-### Events
+$.Marelle.Tip(json)
+---------------------------------------------------------------------------------------------------------
 
-- ready
-- connected
-- disconnected
+### Methods
 
-$.marelle.User()
-------------------
+	add( params ) // {venueId:, text:, url:}
+	search( params ) // {ll:, limit:, offset:, filter:, query:}
+	
+### Actions
 
-### methods
+	marktodo()
+	markdone()
+	unmark()
 
-- User.search( params, callback )
+$.Marelle.Photo(json)
+---------------------------------------------------------------------------------------------------------
 
-    params: { phone: , email: , twitter: , twitterSource: , fbid: , name:  }
+### Methods
 
-		/* 
-			Sends a pre-configured JSONP call with supplied parameters
-		*/
-		
-		User.search({name:'quickredfox'},function(response){
-			// MarelleUser instance can be found:
-			doSomethingWith( response.user )
-		});
+	add( params ) // {checkingId:, tipId:, venueId:, broadcast:, ll:, llAcc:, alt:, altAcc:}
+	
+$.Marelle.Setting(json)
+---------------------------------------------------------------------------------------------------------
 
-- User.requests( callback )
+### Methods
 
-		/* 
-			Sends a pre-configured JSONP call.
-		*/
+	all()
 
-		User.requests(function(response){
-			// response is a decorated json object.
-			doSomethingWith( response.requests )
-		});
+### Actions
 
-### instance methods
-
-- getBadges( callback )
-
-		/* 
-			Sends a pre-configured JSONP call.
-			... and the rest of the methods pretty
-			much works the same.
-		*/
-		
-		var current = $.marelle.getAuthenticaredUser();
-
-		current.getBadges(function(response){
-			// do something with response
-		})
-
-- getCheckins( params, callback )
-
-    params: { limit: , offset: , afterTimestamp: , beforeTimestamp:  }
-
-- getFriends( callback )
-
-- getTips( params, callback )
-
-    params: { sort: , ll:  }
-
-- getTodos( params, callback )
-
-    params: { sort: , ll:  }
-
-- getVenuehistories( callback )
-
-
-$.marelle.Venue()
--------------------
-
-### methods
-
-- Venue.add( params, callback )
-
-    params: { name: , address: , crossStreet: , city: , state: , zip: , phone: , ll: required , primaryCategoryId:  }
-
-- Venue.categories( callback )
-
-- Venue.search( params, callback )
-
-    params: { ll: , llAcc: , alt: , altAcc: , query: , limit: , intent:  }
-
-### instance methods
-
-- getHerenow( callback )
-
-- getTips( params, callback )
-
-    params: { sort:  }
-
-$.marelle.Checkin()
----------------------
-
-### methods
-
-
-- Checkin.add( params, callback )
-
-    params: { venueId: , venue: , shout: , broadcast: , ll: , llAcc: , alt: , altAcc:  }
-
-- Checkin.recent( params, callback )
-
-    params: { ll: , limit: , offset: , afterTimestamp:  }
-
-$.marelle.Tip()
------------------
-
-### methods
-
-
-- Tip.add( params, callback )
-
-    params: { venueId: , text: , url:  }
-
-- Tip.search( params, callback )
-
-    params: { ll: , limit: , offset: , filter: , query:  }
-
-$.marelle.Photo()
--------------------
-
-### methods
-
-
-- Photo.add( params, callback )
-
-    params: { checkingId: , tipId: , venueId: , broadcast: , ll: , llAcc: , alt: , altAcc:  }
-
-$.marelle.Setting()
----------------------
-
-### methods
-
-
-- Setting.all( callback )
-
-LICENSE
--------
-
-
-    Copyright 2011 PraizedMedia Inc. 
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+	set( params ) // {value:}

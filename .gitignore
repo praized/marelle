@@ -1,4 +1,5 @@
 .DS_Store
 /index.html
-qunit
-research
+/qunit
+/research
+/FSQUARE_API_KEY
