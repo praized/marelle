@@ -5,6 +5,15 @@ Foursquare API client library for Javascript, meant to be used with jquery 1.5+,
 
 *Use at your own risks and perils, yet you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.*
 
+Major Changes
+--------------------------------------------------------------------------------------------------------- 
+
+I've slimmed down a lot of stuff in the process of rewriting in coffeescript an decided
+upon dropping events for promises, dropping ajax callback support alltogether in favor of promises and 
+dropped the cookie fallback for browsers that dont support localStorage and various other tidbits regarding
+support for older browsers have been dropped completely also. I've also dropped my stupid ajax caching so 
+that becomes your worries not mine, duck-punch some function or whatever. 
+
 TODO
 --------------------------------------------------------------------------------------------------------- 
 
