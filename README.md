@@ -33,12 +33,44 @@ Fiddle
 
  - [(possibly outdated and broken) Js Fiddle example](http://fiddle.jshell.net/quickredfox/kBrhM/15/show)
 
+QuickExample
+--------------------------------------------------------------------------------------------------------
+
+
+	// Supply your foursquare client id
+	 var FSQUARE_CLIENT_ID = 'FOURSQUARE_CLIENT_ID';
+	// on DOM ready...
+	 $(function() {
+		   // setup with your key and a callback function which 
+		   // receives the Marelle Object ( "M" in this example )
+		   $.Marelle( FSQUARE_CLIENT_ID ).done( function( M ){
+				// grab an authentication promise 
+			   var authpromise = M.authenticateVisitor();
+			   //  handle logged-in user
+			   var authsuccess = function(user){
+				   M.signoutButton( document.body );
+				   console.log(user)
+			   };
+			   // handle non user 
+			   var authfailure = function() {
+				   M.signinButton( document.body );
+			   };
+			   // wait for promise to resolve
+			   authpromise.then(authsuccess,authfailure)
+			
+		   }).fail(function(){
+				consoloe.log('Marelle could not be loaded.')
+		   });
+	   });
+
+
 *****
 
 Marelle API v0.2
 ============================================================================================================
 
-Note: Lotsa lotsa changes, mainly though events have been removed, use promises instead.
+Note: Lotsa lotsa changes! Mainly though: events and support for conventional ajax callbacks have been removed, 
+use promises instead.
 
 Methods
 ============================================================================================================
@@ -90,10 +122,10 @@ Modeled Objects
 Every time an AJAX request is made to the FourSquare API through Marelle, 
 the returned JSON object gets decorated using a JSON representation of 
 the FourSquare API documentation augmented with some fetcher methods during 
-Marelle's internal initialization. This means that all these methods resolve 
-to the original FourSquare API response structure with "meta" and "response" 
-as the first level attributes. Marelle also decorates parent objects with 
-a {attribute}Count variable whenever it encounters a collection of items
+Marelle's internal initialization. This means that all these methods promise 
+to resolve as the original FourSquare API response structure with "meta" and 
+"response" as the first level attributes. Marelle also decorates parent objects 
+with an {attribute}Count variable whenever it encounters a collection of items
 when recognizably structured so by the foursquare API.
 
 $.Marelle.User(json)
