@@ -9,6 +9,7 @@ TODO
 --------------------------------------------------------------------------------------------------------- 
 
   - Finish & Make Public Qunit Tests.
+  - commonjs package and teleport.js ... maybe npm
   - ...amongst other things.
 
 Dependencies
