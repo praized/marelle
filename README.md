@@ -1,7 +1,9 @@
 $.Marelle() v0.2 unstable, untested
 ============================================================================================================
 
-Use at your own risks and perils, yet you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.
+Foursquare API client library for Javascript, meant to be used qith jquery 1.5+, written in coffeescript. 
+
+*Use at your own risks and perils, yet you are welcome to contribute, share, open issues, critique, criticize, or indulge in your preferred manner of constructive contribution.*
 
 TODO
 --------------------------------------------------------------------------------------------------------- 
