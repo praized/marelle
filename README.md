@@ -48,12 +48,17 @@ QuickExample
 		   $.Marelle( FSQUARE_CLIENT_ID ).done( function( M ){
 				// grab an authentication promise 
 			   var authpromise = M.authenticateVisitor();
-			   //  handle logged-in user
-			   var authsuccess = function(user){
+			   //  handle logged-in visitor
+			   var authsuccess = function(visitor){
 				   M.signoutButton( document.body );
-				   console.log(user)
+				   console.log(visitor)
+					/*
+						I think the single entry point is through the visitor
+					*/
+					venuepromise = visitor.getVenues()
+					// venuepromise.then etc..etc...
 			   };
-			   // handle non user 
+			   // handle non visitor
 			   var authfailure = function() {
 				   M.signinButton( document.body );
 			   };
