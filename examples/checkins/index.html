@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title>login example</title>
+	<link rel="stylesheet" href="../shared/marelle.css" type="text/css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  	<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+	<script src="../../vendor/inflection.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../build/marelle.min.js" type="text/javascript" charset="utf-8"></script>	
+
+</head>
+<body>
+	<script type="text/javascript" charset="utf-8">
+		// Supply your foursquare client id
+		 var FSQUARE_CLIENT_ID = 'CQNYUACMANEXA124BE5ANZ3FJMDZX2ITACMODYWAWFD10FIM';
+		var getCheckins
+		 $(function() {
+			   $.Marelle( FSQUARE_CLIENT_ID ).done( function( M ){
+				   var authpromise = M.authenticateVisitor();
+				   var authsuccess = function(data){
+					   M.signoutButton( document.body );
+					   /*
+					     Fetch current user's checkins
+					   */
+					
+					checkinPromise = $.Marelle.Visitor.getCheckins({id:'self'})   
+   					   checkinPromise.then(
+   							function callSuccess(){
+   								console.log( 'success', arguments)
+   							},
+   							function callFailure(){
+   								console.log( 'failure', arguments)								
+   							}
+   					   );
+				   };
+				   var authfailure = function() {
+					   M.signinButton( document.body );
+				   };
+				   authpromise.then(authsuccess,authfailure)
+			   }).fail(function(){
+					consoloe.log('Marelle could not be loaded.')
+			   });
+		   });
+		
+	</script>
+</body>
+</html>

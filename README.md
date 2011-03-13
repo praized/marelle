@@ -1,4 +1,4 @@
-$.Marelle() v0.2 unstable, untested
+$.Marelle() v0.0.3 unstable, untested 
 ============================================================================================================
 
 Foursquare API client library for Javascript, meant to be used with jquery 1.5+, written in coffeescript. 

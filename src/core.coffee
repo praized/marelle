@@ -11,12 +11,14 @@
   @return First matched group
 ###
 
-grep= (str, re)->
+grep=(str, re)->
     m = str.match re
     if m and m[1] then return m[1] 
 
 # CORE
 
+itterate=(obj,fn)->
+    fn( k, value ) for own k, value of obj
 ###
   modelize() 
   
@@ -26,33 +28,34 @@ grep= (str, re)->
   @returns An augmented Marelle object.
 ###   
 modelize= ()->
-    for name, endpoint of API
+    itterate API, (name,endpoint)->
         modelName   = name.classify()
         model       = (data)->
-            for own v, value of data
+            for v, value of data
                 @[v] = decorate v, value, @
-        for method, spec of endpoint.methods
-            http = (spec.http or 'get').toLowerCase() 
-            model[method] = ( params, callback )->
-                if typeof params is 'function'
-                    callback = params
-                    params = {}
-                return XHR.request.call model, http,  name, method, params, callback
-        for aspect, spec of endpoint.aspects
-            http = (spec.http or 'get').toLowerCase() 
-            aspectName = 'get'+ aspect.classify().pluralize()
-            model.prototype[aspectName] = (params, callback)->
-                if typeof params is 'function'
-                    callback = params
-                    params = {}
-                return XHR.request.call @, http, name, @.id, aspect, params, callback
-        for action, spec of endpoint.actions
+            return @
+        itterate endpoint.methods, (method, spec)->
+                http = (spec.http or 'get').toLowerCase() 
+                model[method] = ( params, callback )->
+                    if typeof params is 'function'
+                        callback = params
+                        params = {}
+                    return XHR.request.call model, http,  name, method, params
+        itterate endpoint.aspects, (aspect, spec)->
+                http = (spec.http or 'get').toLowerCase() 
+                aspectName = 'get'+ aspect.classify().pluralize()
+                model.prototype[aspectName] = (params, callback)->
+                    if typeof params is 'function'
+                        callback = params
+                        params = {}
+                    return XHR.request.call @, http, name, @.id||'self', aspect, params
+        itterate endpoint.actions, (action, spec )->
             http = (spec.http||'get').toLowerCase() 
             model.prototype[action] = (id, params, callback)->
                 if typeof params is 'function'
                     callback = params
                     params = {}
-                return XHR.request.call @, http, name, id, action, params, callback
+                return XHR.request.call @, http, name, id, action, params
         Marelle[modelName] = model
     return Marelle
 ###
@@ -79,7 +82,7 @@ decorate = (type, json, parent)->
                 json.items = nuitems;
             return json
         else
-            return new Marelle[klass](json)
+            return new Marelle[model](json)
     else if type is 'groups'
         json.forEach (group, idx)->
             json[idx].items.forEach (item, i)->
@@ -185,12 +188,15 @@ Marelle =
         holder.append(button)
         
     authenticateVisitor: ()->
+        result = $.Deferred()
         request = XHR.request 'get','users','self', {}
         request.done (json)->
-            $.Marelle.Visitor = new Marelle.User json
+            $.Marelle.Visitor = new Marelle.User( json )
+            result.resolve( $.Marelle.Visitor )
         request.fail ()->
             delete $.Marelle.Visitor
-        return request
+            result.reject()
+        return result.promise()
 # create models
 modelize Marelle, API
 
