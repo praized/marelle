@@ -83,7 +83,7 @@ QuickExample
 
 *****
 
-Marelle API v0.2
+Marelle API v0.0.3
 ============================================================================================================
 
 Note: Lotsa lotsa changes! Mainly though: events and support for conventional ajax callbacks have been removed, 

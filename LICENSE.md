@@ -1,4 +1,4 @@
-$.Marelle() v0.2
+$.Marelle() v0.0.3
 ================
 
 Foursquare API client library for Javascript, meant to be used qith jquery 1.5+, written in coffeescript.
